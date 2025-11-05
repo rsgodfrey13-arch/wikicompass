@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Privacy Policy • Compass Analyzer</title>
+  <meta name="description" content="Compass Analyzer Privacy Policy detailing how we collect, use, and protect your information." />
+  <meta property="og:title" content="Privacy Policy • Compass Analyzer" />
+  <meta property="og:description" content="How we collect, use, and safeguard your information." />
+  <meta property="og:type" content="website" />
+  <style>
+    :root{
+      --brand:#00A676;        /* Accent color */
+      --ink:#0F172A;          /* Text */
+      --muted:#5B6577;        /* Secondary text */
+      --bg:#FAFBFC;           /* Page background */
+      --card:#FFFFFF;         /* Card background */
+      --border:#E6E8EF;       /* Borders */
+      --radius:16px;
+      --shadow: 0 8px 24px rgba(15,23,42,0.06);
+    }
+    html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial, sans-serif;line-height:1.6}
+    .wrap{max-width:980px;margin:48px auto;padding:0 20px}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:32px}
+    h1{font-size:clamp(28px,4vw,40px);line-height:1.2;margin:0 0 12px}
+    .eyebrow{color:var(--brand);font-weight:600;letter-spacing:.04em;text-transform:uppercase;font-size:12px;margin-bottom:8px}
+    .meta{color:var(--muted);margin-bottom:24px}
+    h2{font-size:clamp(20px,2.4vw,26px);margin:28px 0 8px}
+    p{margin:8px 0}
+    ul{margin:8px 0 16px 20px}
+    a{color:var(--brand);text-underline-offset:2px}
+    .toc{background: #F6F8FA;border:1px solid var(--border);border-radius:12px;padding:16px;margin:16px 0 24px}
+    .toc a{display:block;color:var(--ink);text-decoration:none;padding:6px 0}
+    .toc a span{color:var(--muted)}
+    .divider{height:1px;background:var(--border);margin:20px 0}
+    footer{color:var(--muted);font-size:14px;margin-top:24px}
+    /* Small screens tweaks */
+    @media (max-width: 640px){ .card{padding:22px} }
+  </style>
+  <!-- Optional: basic structured data -->
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"PrivacyPolicy",
+    "name":"Compass Analyzer Privacy Policy",
+    "inLanguage":"en",
+    "dateEffective":"2025-10-23",
+    "url":"https://compassanalyzer.com/privacy"
+  }
+  </script>
+</head>
+<body>
+  <main class="wrap">
+    <article class="card" role="article" aria-labelledby="pp-title">
+      <div class="eyebrow">Privacy Policy</div>
+      <h1 id="pp-title">Compass Analyzer Privacy Policy</h1>
+      <div class="meta">Effective Date: <time datetime="2025-10-23">10/23/2025</time></div>
+
+      <!-- Table of contents -->
+      <nav class="toc" aria-label="Table of contents">
+        <a href="#introduction"><span>1.</span> Introduction</a>
+        <a href="#collect"><span>2.</span> Information We Collect</a>
+        <a href="#use"><span>3.</span> How We Use Your Information</a>
+        <a href="#sharing"><span>4.</span> Sharing Your Information</a>
+        <a href="#security"><span>5.</span> Data Security</a>
+        <a href="#rights"><span>6.</span> Your Rights</a>
+        <a href="#cookies"><span>7.</span> Cookies and Tracking</a>
+        <a href="#links"><span>8.</span> Third-Party Links</a>
+        <a href="#changes"><span>9.</span> Changes to This Policy</a>
+        <a href="#contact"><span>10.</span> Contact Us</a>
+      </nav>
+
+      <div class="divider"></div>
+
+      <section id="introduction">
+        <h2>1. Introduction</h2>
+        <p>Compass Analyzer (“we,” “us,” or “our”) is committed to protecting your privacy. This Privacy Policy explains how we collect, use, and safeguard your information when you visit our website or use our services.</p>
+      </section>
+
+      <section id="collect">
+        <h2>2. Information We Collect</h2>
+        <p>We may collect personal and non-personal information, including but not limited to:</p>
+        <ul>
+          <li>Names, email addresses, or other details you provide when submitting forms or contacting us.</li>
+          <li>Technical data such as IP address, browser type, and pages visited.</li>
+          <li>Information collected through cookies and similar technologies to improve user experience.</li>
+        </ul>
+      </section>
+
+      <section id="use">
+        <h2>3. How We Use Your Information</h2>
+        <p>We may use your information to:</p>
+        <ul>
+          <li>Operate, maintain, and improve our website and services.</li>
+          <li>Respond to inquiries and provide customer support.</li>
+          <li>Send updates or promotional messages (you can opt out at any time).</li>
+          <li>Analyze usage trends and prevent misuse or fraudulent activity.</li>
+        </ul>
+      </section>
+
+      <section id="sharing">
+        <h2>4. Sharing Your Information</h2>
+        <p>We do not sell or rent your personal information. We may share limited data only with:</p>
+        <ul>
+          <li>Service providers who help us operate our platform (such as hosting, analytics, or email services).</li>
+          <li>Legal authorities if required to comply with applicable laws or protect our rights.</li>
+          <li>Successor entities in the event of a merger, acquisition, or asset transfer.</li>
+        </ul>
+      </section>
+
+      <section id="security">
+        <h2>5. Data Security</h2>
+        <p>We take reasonable measures to protect your information against unauthorized access, loss, or misuse. However, no method of electronic transmission or storage is completely secure.</p>
+      </section>
+
+      <section id="rights">
+        <h2>6. Your Rights</h2>
+        <p>Depending on your location, you may have rights regarding your personal data, including:</p>
+        <ul>
+          <li>Accessing, updating, or deleting your information.</li>
+          <li>Opting out of marketing communications.</li>
+          <li>Restricting or objecting to data processing.</li>
+        </ul>
+        <p>To exercise your rights or request more information, contact us at <a href="mailto:connect@compassanalyzer.com">connect@compassanalyzer.com</a>.</p>
+      </section>
+
+      <section id="cookies">
+        <h2>7. Cookies and Tracking</h2>
+        <p>Our website may use cookies to enhance functionality and analyze traffic. You can control or disable cookies through your browser settings, though some features may not work properly if you do so.</p>
+      </section>
+
+      <section id="links">
+        <h2>8. Third-Party Links</h2>
+        <p>Our website may include links to third-party websites. We are not responsible for the privacy practices or content of those sites and encourage you to review their privacy policies.</p>
+      </section>
+
+      <section id="changes">
+        <h2>9. Changes to This Policy</h2>
+        <p>We may update this Privacy Policy periodically. Updates will be posted on this page with a revised effective date. Continued use of our website after any changes constitutes your acceptance of the updated policy.</p>
+      </section>
+
+      <section id="contact">
+        <h2>10. Contact Us</h2>
+        <p>If you have any questions about this Privacy Policy, please contact us at:<br>
+          📧 <a href="mailto:connect@compassanalyzer.com">connect@compassanalyzer.com</a>
+        </p>
+      </section>
+
+      <footer>
+        <div class="divider"></div>
+        <p>© <span id="year"></span> Compass Analyzer. All rights reserved.</p>
+      </footer>
+    </article>
+  </main>
+
+  <script>
+    // Auto year in footer
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>

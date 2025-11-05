@@ -1,0 +1,1572 @@
+<!doctype html>
+<html lang="en" class="wiki-theme">
+<head>
+<script>(function(s){s.dataset.zone='10133093',s.src='https://forfrogadiertor.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta charset="utf-8" />
+<title>Political Compass (Demo)</title>
+<style>
+
+:root{
+    --brand:#00A676;
+    --brand-dark:#004F3D;
+    --ink:#0F172A;
+    --muted:#5B6577;
+    --card:#ffffff;
+    --border:#E6E8EF;
+    --size: 500px;
+    --cells: 20;
+    --cell: calc(var(--size) / var(--cells));
+    --radius:16px;
+  }
+
+  html, body { min-height: 100%; height: auto; }
+  body{
+    margin:0; padding:0;
+    font-family:"Segoe UI", Roboto, Inter, system-ui, -apple-system, sans-serif;
+    color:#f1f1f1; background:
+      radial-gradient(1400px 900px at 20% -10%, rgba(255,255,255,.08), transparent 60%),
+      linear-gradient(180deg, #007F63 0%, #01694F 45%, #004537 100%);
+    display:block;
+  }
+
+  #pc-wrap{
+    width:100%; max-width:960px;
+    padding:28px 16px 32px;
+    display:flex; flex-direction:column; align-items:stretch; gap:16px; /* was center */
+  }
+
+  .hero{
+    width:100%; max-width:900px;
+    background: linear-gradient(135deg, rgba(255,255,255,.08), rgba(255,255,255,.02));
+    border:1px solid rgba(255,255,255,.18);
+    backdrop-filter: blur(6px);
+    border-radius: var(--radius);
+    padding:20px 18px;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.1), 0 12px 30px rgba(0,0,0,.25);
+  }
+  .hero h2{
+    margin:0 0 8px; font-size:26px; letter-spacing:.3px;
+    text-align:center; text-transform:uppercase; color:#F1FFF9;
+    text-shadow:0 1px 1px rgba(0,0,0,.3);
+  }
+  .hero p{
+    margin:0; font-size:16px; line-height:1.6; color:#D6FFF2; text-align:center;
+  }
+
+  #inputRow{display:flex; gap:10px; justify-content:center; width:100%; max-width:680px}
+  #inputRow{ position:relative; } /* anchor for dropdown */
+
+  input{
+    padding:12px 14px; width:100%;
+    border-radius:10px; border:1px solid rgba(255,255,255,.35);
+    background:rgba(255,255,255,.12); color:#fff; outline:none;
+    transition: box-shadow .2s ease, border-color .2s ease;
+  }
+  input::placeholder{color:rgba(255,255,255,.75)}
+  input:focus{ box-shadow:0 0 0 4px rgba(255,255,255,.18); border-color:#fff; }
+
+  button{
+    padding:12px 18px; border:none; border-radius:10px;
+    background:#0A2F29; color:#fff; cursor:pointer; font-weight:600;
+    letter-spacing:.3px; box-shadow: 0 6px 18px rgba(0,0,0,.2);
+    transition: transform .06s ease, box-shadow .2s ease, background .2s ease;
+  }
+  button:hover{ background:var(--brand-dark); box-shadow:0 10px 24px rgba(0,0,0,.28); }
+  button:active{ transform: translateY(1px); }
+
+  /* Error box */
+  #errorBox{
+    display:none; width:100%; max-width:680px; margin-top:6px;
+    border:1px solid rgba(255,0,0,.35);
+    background: rgba(255,0,0,.12);
+    color:#FFECEC;
+    border-radius:10px; padding:10px 12px;
+    box-shadow: 0 6px 16px rgba(0,0,0,.12);
+  }
+
+  #result-handle{
+    display:none; margin:2px 0 4px; font-size:34px; line-height:1.1;
+    text-align:center; letter-spacing:.4px; text-transform:uppercase;
+    color:#E9FFF7; text-shadow:0 1px 0 rgba(0,0,0,.25);
+  }
+
+  /* Progress */
+  #analyzingBlock{
+    display:none; align-items:center; justify-content:space-between;
+    gap:12px; height:auto; width:100%; max-width:680px; padding:10px 12px;
+    background:linear-gradient(90deg,#B9FFE0,#E9FFF7);
+    color: #0f2930; font-weight:700; letter-spacing:.3px;
+    border-radius:10px; box-shadow:0 6px 16px rgba(0,0,0,.12);
+  }
+  #progress{
+    flex:1; height:10px; background:rgba(15,41,48,.15);
+    border-radius:999px; overflow:hidden; border:1px solid rgba(15,41,48,.2);
+  }
+  #progress-bar{
+    height:100%; width:0%;
+    background:linear-gradient(90deg, #0a2f29 0%, #007a62 100%);
+    border-right:1px solid rgba(255,255,255,.65);
+    transition: width .25s ease;
+  }
+  #progress-text{ font-size:14px; min-width:160px; text-align:right; color:#083238; }
+
+  #status{ color:#D7F7EC; font-size:16px; min-height:18px }
+
+  #main-content{
+    width:100%;
+    display:flex; gap:18px; justify-content:center; flex-wrap:wrap; margin-top:6px;
+    background: rgba(10, 35, 30, 0.55);
+    border:1px solid rgba(255,255,255,0.18);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-radius: 16px;
+    box-shadow: 0 16px 40px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.08);
+    padding:18px;
+  }
+
+#right-panel {
+  background: rgba(14, 50, 40, 0.65);
+  color: #E8FFF5;
+  border-radius: 12px;
+  padding: 16px;
+  width: 360px;
+  border: 1px solid rgba(255,255,255,0.18);
+  box-shadow: 0 8px 24px rgba(0,0,0,.35);
+    height: auto;
+  max-height: none;          /* allow full height by default */
+  overflow: visible;         /* no inner scrollbars */
+}
+
+  #similarList div{margin-bottom:10px}
+  #similarList strong{color:#E8FFF5}
+  #evidenceBlock{margin-top:16px}
+  #evidenceBlock ul{padding-left:20px;margin-top:8px}
+  #evidenceBlock li{margin:6px 0;color:#D4FFF1}
+
+  #compass-wrap{display:grid;grid-template-columns:auto var(--size) auto;grid-template-rows:auto var(--size) auto;gap:8px;align-items:center}
+  #label-top,#label-bottom,#label-left,#label-right{color:#E9FFF6;text-shadow:0 1px 2px rgba(0,0,0,.4)}
+  #label-top{grid-column:2;grid-row:1;justify-self:center;font-size:18px}
+  #label-bottom{grid-column:2;grid-row:3;justify-self:center;font-size:18px}
+  #label-left{grid-column:1;grid-row:2;justify-self:center;transform:rotate(-90deg);font-size:18px}
+  #label-right{grid-column:3;grid-row:2;justify-self:center;transform:rotate(90deg);font-size:18px}
+
+  #plot-frame{
+    grid-column:2; grid-row:2; position:relative;
+    width:var(--size); height:var(--size);
+    border:1px solid rgba(255,255,255,.25); border-radius:14px; overflow:visible;
+    background:
+      radial-gradient(120% 120% at 50% -20%, rgba(255,255,255,.1), transparent 60%),
+      radial-gradient(90% 90% at 50% 120%, rgba(0,0,0,.45), transparent 70%);
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,.18), 0 10px 30px rgba(0,0,0,.5);
+  }
+
+  #plot{
+    position:absolute; inset:0; border-radius:12px; overflow:hidden;
+    background-image:
+      repeating-linear-gradient(to right, transparent 0 calc(var(--cell) - 1px), rgba(255,255,255,.12) calc(var(--cell) - 1px) var(--cell)),
+      repeating-linear-gradient(to bottom, transparent 0 calc(var(--cell) - 1px), rgba(255,255,255,.12) calc(var(--cell) - 1px) var(--cell)),
+      linear-gradient(#e64a4a,#c03838),
+      linear-gradient(#3b82f6,#2563eb),
+      linear-gradient(#22c55e,#15803d),
+      linear-gradient(#a855f7,#7e22ce);
+    background-size:
+      var(--cell) 100%, 100% var(--cell),
+      50% 50%, 50% 50%, 50% 50%, 50% 50%;
+    background-position: 0 0, 0 0, left top, right top, left bottom, right bottom;
+    background-repeat: repeat, repeat, no-repeat, no-repeat, no-repeat, no-repeat;
+  }
+
+  .dot{ position:absolute; width:14px; height:14px; border-radius:50%;
+        background:#000; transform:translate(-50%,-50%); display:none;
+        box-shadow:0 0 0 4px rgba(255,255,255,.9), 0 0 20px rgba(0,0,0,.5);
+        transition:left .25s ease, top .25s ease; }
+  .dot.small{ width:12px; height:12px; }
+
+  .tag{ position:absolute; transform:translate(-50%,-100%);
+        padding:6px 8px; border-radius:10px; background:rgba(255,255,255,.92); color:#0f172a;
+        border:1px solid rgba(0,0,0,.2); font-size:12px; white-space:nowrap;
+        display:none; box-shadow:0 8px 24px rgba(0,0,0,.35);
+        transition:left .25s ease, top .25s ease, opacity .2s ease; }
+  .tag.small{ font-size:11px; padding:4px 6px; }
+
+  @media (max-width: 1180px){ :root{ --size: 440px; } }
+  @media (max-width: 980px){ :root{ --size: 380px; } #right-panel{ width:100%; max-width:640px; } }
+  @media (max-width: 680px){
+    :root{ --size: 310px; }
+    .hero h2{font-size:22px}
+    #result-handle{font-size:28px}
+  }
+
+  /* Autocomplete dropdown */
+  #ta-wrap{
+    position:absolute; left:0; right:0; top:100%; margin-top:6px;
+    z-index:50; display:none;
+  }
+  #ta-list{
+    background: rgba(255,255,255,.98);
+    color:#0f172a;
+    border:1px solid rgba(0,0,0,.15);
+    border-radius:10px;
+    box-shadow: 0 16px 40px rgba(0,0,0,.35);
+    overflow:hidden;
+  }
+  .ta-item{
+    padding:10px 12px; cursor:pointer; display:flex; align-items:center; gap:8px;
+    border-bottom:1px solid rgba(0,0,0,.06);
+  }
+  .ta-item:last-child{ border-bottom:none; }
+  .ta-item:hover, .ta-item[aria-selected="true"]{
+    background:linear-gradient(90deg,#E9FFF7,#D7F7EC);
+  }
+  .ta-title{ font-weight:600; }
+  .ta-desc{ color:#566; font-size:12px; margin-left:auto; }
+
+/* ===== Wikipedia-ish + brand-blue tweaks (paste at end) ===== */
+.wiki-theme {
+  /* page + layout */
+  --container: 960px;       /* wider content column */
+  --page-bg: transparent;    /* we’ll set a gradient on body */
+  --radius: 4px;
+  --ink: #202122;
+  --muted: #43474d;
+  --border: #a2a9b1;
+  --card: #ffffff;
+  --link: #36c;
+  --link-visited: #6b4ba1;
+}
+
+/* Blue background similar to your original vibe */
+.wiki-theme body{
+  /* calm blue gradient background so white cards pop */
+  background:
+    linear-gradient(180deg, #00b7ff 0%, #0aa1e2 45%, #0b78cf 100%);
+  color: var(--ink);
+}
+
+/* Improve readability in the hero */
+.wiki-theme .hero{
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+.wiki-theme .hero h2{
+  color: var(--ink);
+  font-weight: 700;
+  letter-spacing: 0;
+}
+.wiki-theme .hero p{
+  color: var(--muted);
+}
+
+/* Make the input row wider and stable at the top */
+.wiki-theme #inputRow{
+  max-width: 680px;       /* was 680px */
+  margin: 12px auto 0;
+  position: relative;     /* keeps dropdown anchored */
+  gap: 12px;
+}
+.wiki-theme #inputRow input{
+  font-size: 16px;
+  padding: 12px 14px;
+  background: #fff;
+  color: var(--ink);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+}
+.wiki-theme #inputRow input:focus{
+  outline: 2px solid #36c3;
+  border-color: #36c;
+}
+.wiki-theme #inputRow button{
+  padding: 12px 18px;
+  border-radius: 3px;
+}
+
+/* Autocomplete dropdown: keep it above other panels & readable */
+.wiki-theme #ta-wrap{ z-index: 1000; }
+.wiki-theme #ta-list{
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  box-shadow: 0 6px 18px rgba(0,0,0,.12);
+}
+.wiki-theme .ta-item{ border-bottom: 1px solid #eaecf0; }
+.wiki-theme .ta-item:hover,
+.wiki-theme .ta-item[aria-selected="true"]{ background:#f6f6f6; }
+
+/* Cards/panels: subtle, high-contrast text on white */
+.wiki-theme #main-content,
+.wiki-theme #right-panel{
+  background: var(--card);
+  border: 1px solid var(--border);
+  color: var(--ink);
+  box-shadow: none;
+  border-radius: 3px;
+}
+
+/* Plot labels: darken so they’re readable on white */
+.wiki-theme #label-top,
+.wiki-theme #label-bottom,
+.wiki-theme #label-left,
+.wiki-theme #label-right{
+  color: #5a5f66;         /* darker than the previous mint */
+  text-shadow: none;
+}
+
+/* Progress bar text contrast on white card */
+.wiki-theme #analyzingBlock{
+  color: #083238;
+}
+
+/* ===== polish: dark link color, softer white, rounded search ===== */
+.wiki-theme {
+  --offwhite: #f4f5f6;   /* off-white for the center card */
+  --bg-dark:  #243447;   /* same dark blue background you mentioned */
+}
+
+/* Use dark text instead of mint/green in evidence list */
+.wiki-theme #right-panel,
+.wiki-theme #similarList,
+.wiki-theme #evidenceBlock,
+.wiki-theme #evidenceBlock li,
+.wiki-theme #evidenceBlock strong {
+  color: var(--bg-dark);
+}
+
+/* Make the white panels slightly off-white */
+.wiki-theme #main-content,
+.wiki-theme #right-panel {
+  background: var(--offwhite);
+}
+
+/* Round the compass frame and inputs/buttons more */
+.wiki-theme #plot-frame {
+  border-radius: 12px;
+}
+.wiki-theme input,
+.wiki-theme button,
+.wiki-theme #main-content,
+.wiki-theme #right-panel {
+  border-radius: 8px;
+}
+
+/* Keep the blue background consistent with your brand */
+.wiki-theme body {
+  background: linear-gradient(180deg, #00b7ff 0%, #0aa1e2 45%, #0b78cf 100%);
+}
+
+/* Optional: make the input row stand out a bit more */
+.wiki-theme #inputRow input {
+  border: 1px solid #b5b8bd;
+  background: #fff;
+  color: #202122;
+  font-size: 16px;
+  padding: 12px 16px;
+}
+.wiki-theme #inputRow button {
+  background: #243447;
+  color: #fff;
+  border: none;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+}
+.wiki-theme #inputRow button:hover {
+  background: #1e2d3d;
+}
+
+/* 4) Force readable dark text in the side panel */
+.wiki-theme #right-panel,
+.wiki-theme #right-panel *{
+  color: #243447 !important;
+}
+
+/* === restore and refine hero box === */
+.wiki-theme .hero {
+  background: linear-gradient(180deg, rgba(255,255,255,0.96), rgba(255,255,255,0.90));
+  border: 1px solid rgba(0,0,0,0.08);
+  border-radius: 16px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+  padding: 22px 24px;
+  text-align: center;
+  max-width: 680px;
+  margin: 0 auto 20px;
+}
+
+/* Stronger readable colors inside */
+.wiki-theme .hero h2 {
+  color: #0a0a0a;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-shadow: none;
+}
+
+.wiki-theme .hero p {
+  color: #243447;
+}
+
+/* Round the blue background corners at the very top */
+.wiki-theme body {
+  background: linear-gradient(180deg, #00b7ff 0%, #0aa1e2 45%, #0b78cf 100%);
+  border-radius: 24px 24px 0 0; /* rounded top corners */
+  overflow-x: hidden; /* was overflow: hidden; keep vertical scroll */
+}
+
+/* ===== ADDED: Neutral-state UI bits ===== */
+.neutral-card{
+  background:#fff;
+  border:1px solid #E6E8EF;
+  border-radius:12px;
+  padding:14px 16px;
+  box-shadow:0 8px 24px rgba(0,0,0,.12);
+  margin-top:10px;
+  color:#243447;
+}
+.neutral-card h3{ margin:0 0 6px; font-size:16px; font-weight:700; }
+.neutral-note{ color:#5b6577; font-size:14px; line-height:1.5; }
+.neutral-actions{ display:flex; gap:8px; margin-top:10px; }
+.neutral-actions button{
+  border:1px solid #E6E8EF;
+  background:#f6f7fb;
+  color:#243447;
+  border-radius:10px;
+  padding:8px 12px;
+  cursor:pointer;
+}
+
+/* 1) Stop sideways scrolling */
+html, body { overflow-x:hidden; }
+
+/* 2) A centered page container that shrinks on phones */
+.page, .container {
+  max-width: 960px;   /* looks good on laptops */
+  margin: 0 auto;
+  padding-inline: 16px;
+  box-sizing: border-box;
+}
+
+/* 3) Make the compass size responsive instead of hard 500px */
+:root{
+  /* was: --size: 500px; */
+  --size: clamp(260px, 80vw, 520px);  /* min on phones, max on desktop */
+}
+
+/* 4) Images/canvas never exceed the screen */
+img, canvas, svg { max-width:100%; height:auto; display:block; }
+
+/* 5) Search bar + button: row on desktop, stack on phones */
+.search-row{
+  display:flex; gap:12px; align-items:center;
+}
+.search-row input{ flex:1; min-width:0; }
+.search-row button{ white-space:nowrap; }
+
+/* Stack on small screens so the button doesn't cover the input */
+@media (max-width: 640px){
+  .search-row{ flex-direction:column; }
+  .search-row button, .search-row input{ width:100%; }
+}
+
+/* 6) Fluid typography so headings don’t blow up on mobile */
+h1{ font-size: clamp(22px, 4.5vw, 40px); line-height:1.15; }
+h2{ font-size: clamp(18px, 3.5vw, 28px); }
+
+/* 7) Cards/panels breathe less on phones */
+.card{ border-radius:16px; padding: clamp(12px, 3vw, 24px); }
+
+/* 8) Kill any accidental fixed widths */
+*[style*="width:"]{ max-width:100% !important; }
+
+/* 1) Make the search row flexible */
+.search-row,
+form[action*="analy"], /* catches your form even if class names differ */
+form .search,
+form .search-row {
+  display: flex !important;
+  align-items: center;
+  gap: 12px;
+}
+
+/* 2) Input should take the available space */
+.search-row input[type="text"],
+.search-row input[type="search"],
+form input[type="text"],
+form input[type="search"] {
+  flex: 1 1 auto;
+  min-width: 0;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* 3) Kill absolute positioning on the button */
+.search-row button,
+form button[type="submit"],
+form .button,
+form .btn {
+  position: static !important;   /* this is the key fix */
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+
+/* 4) Stack on small screens so nothing overlaps */
+@media (max-width: 640px){
+  .search-row,
+  form[action*="analy"],
+  form .search,
+  form .search-row { 
+    flex-direction: column !important;
+    align-items: stretch;
+  }
+  .search-row button,
+  form button[type="submit"],
+  form .button,
+  form .btn {
+    width: 100%;
+  }
+}
+
+/* 5) Keep the compass fluid (if you use --size) */
+:root { --size: clamp(260px, 80vw, 520px); }
+
+/* 6) Prevent sideways scroll just in case */
+html, body { overflow-x: hidden; }
+
+/* --- Mobile hard clamp + overlap fixes --- */
+@media (max-width: 640px){
+
+  /* 0) Make sure the page itself can't exceed the viewport */
+  html, body { width:100%; overflow-x:hidden; }
+
+  /* 1) Any section/container/row from the builder stays within screen */
+  .site, .page, .section, .container, .row, .cols, .grid, .hero, .card, .content {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    box-sizing: border-box;
+  }
+
+  /* 2) Kill negative margins / oversized mins that cause overflow */
+  [style*="margin-left:-"], [style*="margin-right:-"] { margin-left:0 !important; margin-right:0 !important; }
+  [style*="min-width"] { min-width: 0 !important; }
+
+  /* 3) Images/canvas never overflow */
+  img, canvas, svg { max-width:100% !important; height:auto !important; display:block; }
+
+  /* 4) Search input + button stack (no absolute positioning) */
+  .search-row,
+  form[action*="analy"], form .search, form .search-row {
+    display:flex !important;
+    flex-direction:column !important;
+    align-items:stretch !important;
+    gap:12px;
+  }
+  .search-row input[type="text"],
+  .search-row input[type="search"],
+  form input[type="text"], form input[type="search"]{
+    width:100% !important; min-width:0 !important;
+  }
+  .search-row button,
+  form button[type="submit"], form .button, form .btn {
+    position: static !important;
+    width:100% !important;
+    float:none !important;
+    white-space:nowrap;
+  }
+
+  /* 5) Headline wraps instead of pushing the layout wider */
+  h1 { font-size: clamp(22px, 6vw, 40px); line-height:1.15; word-break: break-word; }
+}
+
+
+
+  /* Add this near the end */
+.explain {
+  overflow: auto;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* === SOLID BLUE PAGE BG (no gradients) — drop-in override === */
+:root { --page-blue: #0AA1E2; }  /* pick your exact blue here */
+
+.wiki-theme body,
+body {
+  background: var(--page-blue) !important;   /* solid only */
+  background-image: none !important;         /* nuke gradients if set elsewhere */
+}
+
+/* If GoDaddy wrappers paint a color, make them transparent so the blue shows */
+.site, .page, .section, .container, .row, .cols, .grid, .content {
+  background: transparent !important;
+}
+
+/* ===== Analysis card (bottom, full width) ===== */
+#analysis-panel{
+  width:100%;
+  max-width:1100px;
+  margin:14px 0 20px;  /* was auto left/right */
+  background: var(--offwhite, #f4f5f6);
+  border:1px solid var(--border, #a2a9b1);
+  border-radius:8px;
+  box-shadow:none;
+  padding:16px 18px;
+}
+#analysis-panel h3 {
+  text-align: center;
+  font-size: 26px;
+  font-weight: 700;
+  margin: 0 0 16px;
+  letter-spacing: 0.4px;
+}
+
+#analysis-body p{
+  margin:8px 0;
+  color: var(--ink, #202122);
+  line-height:1.55;
+}
+
+/* Give phones extra vertical runway so nothing clips */
+@media (max-width: 680px){
+  body{ min-height: 220vh; }
+}
+
+/* --- iOS/Safari cut-off fix: use dynamic viewport units and kill fixed 100vh --- */
+
+/* Let the page use the full *visible* viewport, not the old 100vh */
+html, body {
+  height: auto !important;
+  min-height: 100dvh !important;   /* modern browsers */
+  padding-top: env(safe-area-inset-top);      /* notch safety */
+  padding-bottom: env(safe-area-inset-bottom);/* home-bar safety */
+}
+
+/* If svh is supported, prefer it on iOS for more stability */
+@supports (height: 100svh) {
+  html, body { min-height: 100svh !important; }
+}
+
+/* Some site builders set sections/rows to 100vh; override that */
+.site, .page, .section, .container, .row, .cols, .grid, .content, .hero, .card {
+  height: auto !important;
+  min-height: auto !important;       /* don’t force a taller-than-screen layout */
+  overflow-y: visible !important;     /* allow content to extend */
+}
+
+/* Catch inline styles that hard-code vh */
+[style*="vh"] { height: auto !important; min-height: auto !important; }
+
+/* Keep sideways scroll disabled, but DO NOT hide vertical scrolling */
+html, body { overflow-x: hidden; overflow-y: auto; }
+
+/* 1) Center the app without using body flex */
+#pc-wrap {
+  margin: 0 auto;                  /* center the container */
+}
+
+/* 2) Prevent width:100% + padding from overflowing on small screens */
+*, *::before, *::after { box-sizing: border-box; }
+
+/* 3) Keep analysis panel inside the same container width */
+#analysis-panel {
+  max-width: 960px;                /* match #pc-wrap */
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* 4) Make main-content safe too (it also has width:100% + padding) */
+#main-content {
+  box-sizing: border-box;
+  max-width: 100%;
+}
+
+/* 5) If you still see a 1-2px nudge on some devices, allow soft wrap and kill rogue mins */
+html, body { overflow-x: hidden; }
+[style*="min-width"] { min-width: 0 !important; }
+
+
+/* === restore your original desktop width & centering === */
+body {
+  display: flex;                 /* like your “Correct” page */
+  align-items: flex-start;
+  justify-content: center;
+}
+
+#pc-wrap{
+  width:100%;
+  max-width:1100px;              /* back to your original */
+  margin:0 auto;                 /* harmless with body flex */
+  display:flex;
+  flex-direction:column;
+  align-items:center;            /* match original behavior */
+}
+
+/* === stop tiny mobile overflows caused by padding === */
+*, *::before, *::after { box-sizing: border-box; }
+
+/* keep main-content inside the viewport even with padding */
+#main-content{ max-width:100%; }
+
+/* analysis panel: match container, but never exceed it on phones */
+#analysis-panel{
+  width:100%;
+  max-width:1100px;              /* match #pc-wrap */
+  margin:14px auto 20px;
+  /* padding stays, but border-box keeps it inside 100% */
+}
+
+/* safety: no element should force a wider page */
+html, body { overflow-x: hidden; }
+[style*="min-width"] { min-width: 0 !important; } /* kill rogue builder mins */
+
+/* optional: if a single long word/name pushes width, allow wrapping */
+#analysis-panel, #right-panel, #main-content, .hero {
+  overflow-wrap: anywhere;
+}
+
+/* keep the compass responsive (single source of truth) */
+:root { --size: clamp(260px, 80vw, 520px); }
+
+
+/* === MOBILE ONLY FIXES (leave desktop as-is) === */
+@media (max-width: 680px){
+  /* No sideways scroll anywhere */
+  html, body { overflow-x: hidden; }
+
+  /* Keep the compass square but never wider than the viewport */
+  #plot-frame{
+    width: min(var(--size), 88vw);
+    height: min(var(--size), 88vw);
+    max-width: 88vw;
+    max-height: 88vw;
+  }
+
+  /* Vertical labels on phones; no transforms needed */
+  #label-left,
+  #label-right{
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    transform: none !important;
+    white-space: nowrap;
+    line-height: 1;
+    text-align: center;
+  }
+
+  /* Slightly tighter gaps so the grid fits comfortably */
+  #compass-wrap{ column-gap: 8px; }
+
+  /* Right panel goes full width below the compass (no squeeze) */
+  #right-panel{
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.fig-title {
+  margin-top: 0;
+  margin-bottom: 12px;
+  font-size: 1.25em;
+  font-weight: 600;
+  color: #E8FFF5;
+  text-align: center;
+}
+
+#marker-pos,
+#marker-neg,
+#label-pos,
+#label-neg {
+  display: none !important;
+}
+
+</style>
+</head>
+<body>
+<div id="pc-wrap">
+
+  <div class="hero">
+    <h2>Welcome to the Wikipedia Political Compass Analyzer</h2>
+    <p>
+The Political Compass Analyzer uses AI to read an entire Wikipedia page in seconds. It sums up a person’s political views and shows where they fit on the political compass below.    </p>
+  </div>
+
+  <div id="inputRow">
+    <input id="userInput" placeholder="elonmusk or AOC (no @ needed)" aria-label="X.com handle input" />
+    <button id="sendBtn" onclick="sendData()">Analyze</button>
+
+    <!-- Autocomplete dropdown -->
+    <div id="ta-wrap" role="listbox" aria-label="Wikipedia suggestions">
+      <div id="ta-list"></div>
+    </div>
+  </div>
+
+  <div id="errorBox" role="alert" aria-live="assertive"></div>
+  <div id="result-handle"></div>
+
+  <div id="analyzingBlock" aria-live="polite">
+    <div id="progress"><div id="progress-bar"></div></div>
+    <div id="progress-text">Analyzing… 0%</div>
+  </div>
+
+  <div id="main-content">
+    <div id="compass-wrap">
+      <div id="label-top">Authoritarian</div>
+      <div id="label-left">Left</div>
+
+      <div id="plot-frame">
+        <div id="plot"></div>
+
+        <div id="marker-self" class="dot"></div>
+        <div id="label-self"  class="tag"></div>
+
+         <div id="marker-pos" class="dot small"></div> 
+         <div id="label-pos"  class="tag small"></div> 
+
+         <div id="marker-neg" class="dot small"></div> 
+         <div id="label-neg"  class="tag small"></div> 
+      </div>
+
+      <div id="label-right">Right</div>
+      <div id="label-bottom">Libertarian</div>
+    </div>
+
+    <div id="right-panel">
+	 <!--  <h2 class="fig-title">Results</h2> -->
+	  <div id="evidenceBlock"></div>
+      <div id="similarList"></div>
+      
+    </div>
+  </div>
+
+<!-- Analysis panel (hidden until we have text) -->
+<section id="analysis-panel" hidden>
+  <h3>ANALYSIS</h3>
+  <div id="analysis-body"></div>
+</section>
+
+
+  <div id="status"></div>
+</div>
+
+<script>
+/* =================== CONFIG =================== */
+const API_URL = "https://compass.rsgodfrey13.workers.dev/api/test";
+
+/* =================== ELEMENTS ================= */
+const plotFrame = document.getElementById("plot-frame"),
+      plot      = document.getElementById("plot"),
+      markerSelf= document.getElementById("marker-self"),
+      labelSelf = document.getElementById("label-self"),
+      markerPos = document.getElementById("marker-pos"),
+      labelPos  = document.getElementById("label-pos"),
+      markerNeg = document.getElementById("marker-neg"),
+      labelNeg  = document.getElementById("label-neg"),
+      statusEl  = document.getElementById("status"),
+      analyzingEl=document.getElementById("analyzingBlock"),
+      sendBtn   = document.getElementById("sendBtn"),
+      inputEl   = document.getElementById("userInput"),
+	  summaryEl = document.getElementById("evidenceBlock"), 
+      simListEl = document.getElementById("similarList"),
+      resultHandleEl=document.getElementById("result-handle"),
+	  evidenceEl= document.getElementById("evidenceBlock"),
+	  analysisPanel = document.getElementById("analysis-panel"),
+	  analysisBody  = document.getElementById("analysis-body"),
+      errorBox  = document.getElementById("errorBox");
+
+const ECON_MIN=-10,ECON_MAX=10,AUTH_MIN=-10,AUTH_MAX=10;
+let last={self:null,pos:null,neg:null};
+let lastHandle="";
+
+function isTimeoutLike(err){
+  const m = String(err && (err.userMessage || err.message || "")).toLowerCase();
+  return err?.name === "AbortError" || /timeout|timed out|network.*timeout|abort/.test(m);
+}
+
+/* ======== non-overlap spiral placement state ==== */
+const placed = []; // {x,y,radius}
+function resetPlaced(){ placed.length = 0; }
+
+/** Spiral search for nearest free spot (in px, relative to plot-frame). */
+function placeNonOverlapping(targetX, targetY, {
+  radius = 7,
+  minGap = 2,
+  maxSteps = 160,
+  step = 3
+} = {}){
+  const rectW = plotFrame.clientWidth;
+  const rectH = plotFrame.clientHeight;
+
+  const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+  const collide = (xx, yy) => placed.some(p => {
+    const dx = p.x - xx, dy = p.y - yy;
+    return Math.hypot(dx, dy) < (p.radius + radius + minGap);
+  });
+
+  // First try the target
+  let x = clamp(targetX, radius, rectW - radius);
+  let y = clamp(targetY, radius, rectH - radius);
+  if (!collide(x,y)) return {x,y};
+
+  // Spiral outwards
+  let angle = 0, r = step;
+  for (let i=0;i<maxSteps;i++){
+    const xx = clamp(targetX + Math.cos(angle)*r, radius, rectW - radius);
+    const yy = clamp(targetY + Math.sin(angle)*r, radius, rectH - radius);
+    if (!collide(xx,yy)) return {x:xx, y:yy};
+    angle += Math.PI/6;
+    if (i % 12 === 11) r += step;
+  }
+  return {x,y};
+}
+
+/* ================== PROGRESS BAR =============== */
+const progress = { raf:null, pct:0 };
+
+function startProgress(){
+  analyzingEl.style.display = "flex";
+  progress.pct = 0;
+  setProgress(0, "Starting…");
+
+  const stages = [
+    { label: "Searching Wikipedia entries",     target: 0.20, duration: 7000 },
+    { label: "Extracting key facts & summaries",       target: 0.40, duration: 7000 },
+    { label: "Cross-referencing related figures",        target: 0.55, duration: 6000 },
+    { label: "Analyzing ideological context",   target: 0.70, duration: 6000 },
+    { label: "Locating nearest historical match",          target: 0.82, duration: 5000 },
+    { label: "Finalizing compass coordinates",      target: 0.90, duration: 4000 },
+    { label: "Assembling insight summary",         target: 0.96, duration: 4000 },
+  ];
+
+  let i = 0, phaseStart = performance.now();
+
+  function tick(now){
+    if(i < stages.length){
+      const s = stages[i];
+      const t = Math.min(1, (now - phaseStart) / s.duration);
+      const cur = progress.pct + (s.target - progress.pct) * t;
+      setProgress(cur, s.label);
+      if(t >= 1){ i++; phaseStart = now; }
+    } else {
+      const creep = Math.min(0.96, progress.pct + 0.0018);
+      setProgress(creep, "Finalizing…");
+    }
+    progress.raf = requestAnimationFrame(tick);
+  }
+  progress.raf = requestAnimationFrame(tick);
+}
+
+function setProgress(frac, label){
+  progress.pct = Math.max(0, Math.min(1, frac));
+  const pct = Math.round(progress.pct * 100);
+  document.getElementById("progress-bar").style.width = pct + "%";
+  document.getElementById("progress-text").textContent = (label || "Analyzing…") + " " + pct + "%";
+}
+
+function stopProgress(){
+  if(progress.raf) cancelAnimationFrame(progress.raf);
+  setProgress(1, "Done");
+  setTimeout(()=>{ analyzingEl.style.display = "none"; setProgress(0, "Analyzing… 0%"); }, 600);
+}
+
+/* =================== INPUT ===================== */
+inputEl.addEventListener("keydown",e=>{
+  // If autocomplete is open, let it handle Enter; otherwise allow Enter to trigger send
+  if (taIsOpen()) return;
+  if(e.key==="Enter") sendData();
+});
+
+/* ========== YOUR NEUTRAL HELPERS (ABOVE sendData) ========== */
+
+// read axes from either form and normalize to -10..10
+function extractAxes(r){
+  if (!r || typeof r !== "object") return null;
+
+  // 1) Direct econ/auth (e.g., { input:{ econ, auth } } or { econ, auth })
+  const e1 = Number(r?.input?.econ ?? r?.econ);
+  const a1 = Number(r?.input?.auth ?? r?.auth);
+  if (!Number.isNaN(e1) && !Number.isNaN(a1)) return { econ: e1, auth: a1 };
+
+  // 2) Percentage form (0..1) -> convert back to -10..10 using your constants
+  if (typeof r?.x_pct === "number" && typeof r?.y_pct === "number"){
+    const econ = ECON_MIN + (ECON_MAX-ECON_MIN) * r.x_pct;
+    const auth = AUTH_MAX - (AUTH_MAX-AUTH_MIN) * r.y_pct; // invert Y
+    return { econ, auth };
+  }
+  // 3) Nested under input as x_pct/y_pct (rare, but safe)
+  if (typeof r?.input?.x_pct === "number" && typeof r?.input?.y_pct === "number"){
+    const econ = ECON_MIN + (ECON_MAX-ECON_MIN) * r.input.x_pct;
+    const auth = AUTH_MAX - (AUTH_MAX-AUTH_MIN) * r.input.y_pct;
+    return { econ, auth };
+  }
+  return null;
+}
+
+// YOUR requested rule: neutral if BOTH |econ|<1.5 AND |auth|<1.5
+function detectNeutral(r){
+  const axes = extractAxes(r);
+  if (axes && Math.abs(axes.econ) < 1.5 && Math.abs(axes.auth) < 1.5){
+    return { axes, why: "Scores are near the center on both axes (±1.5).", uncertainty: undefined };
+  }
+  return null;
+}
+
+function showNeutralState(reason, axes, uncertainty){
+  clearMarkers();
+  resultHandleEl.textContent = lastHandle;
+  resultHandleEl.style.display = "block";
+
+  const aTxt = axes ? `Scores near center (econ ${axes.econ.toFixed(1)}, auth ${axes.auth.toFixed(1)})` : "";
+  const uTxt = (typeof uncertainty==="number") ? `Uncertainty: ${(uncertainty*100).toFixed(0)}%` : "";
+
+  simListEl.innerHTML = `
+    <div class="neutral-card">
+      <h3>Not enough political signals</h3>
+      <div class="neutral-note">${escapeHtml(reason)}<br>${aTxt}${uTxt?`<br>${uTxt}`:""}</div>
+      <div class="neutral-actions">
+        <button onclick="inputEl.focus()">Try another name</button>
+      </div>
+    </div>`;
+  evidenceEl.innerHTML = "";
+  renderAnalysis(""); // hide analysis when neutral
+
+  removeNeutralBadge();
+  const badge = document.createElement("div");
+  badge.id = "neutral-badge";
+  Object.assign(badge.style,{
+    position:"absolute",right:"12px",bottom:"12px",fontSize:"12px",
+    padding:"4px 8px",borderRadius:"999px",background:"#e9edf5",
+    color:"#5B6577",border:"1px solid #d8dde7"
+  });
+  badge.textContent = "No placement";
+  plotFrame.appendChild(badge);
+}
+
+function removeNeutralBadge(){
+  const b = document.getElementById("neutral-badge");
+  if (b) b.remove();
+}
+
+/* =================== SEND ====================== */
+const REQUEST_TIMEOUT_MS = 120000;
+const MAX_RETRIES        = 2;
+const RETRY_BASE_DELAY   = 1200;
+
+async function sendData(){
+  const value=inputEl.value.trim();
+  if(!value){ alert("Please type something first!"); return; }
+  lastHandle=value.replace(/^@/,"");
+
+  hideError();
+  startProgress(); setStatus("Working…"); disableButton(true);
+
+  try{
+    const data = await fetchWithRetries(API_URL, {
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({userInput:value})
+    }, REQUEST_TIMEOUT_MS, MAX_RETRIES);
+
+    // === YOUR exact neutral check ===
+    const neutral = detectNeutral(data);
+    if (neutral){
+      removeNeutralBadge();
+      showNeutralState(neutral.why, neutral.axes, neutral.uncertainty);
+      setStatus("");
+      stopProgress(); disableButton(false);
+      return; // skip plotting/nearest figures
+    }
+    removeNeutralBadge();
+    // =================================
+
+    const payload=normalizeResponse(data);
+    clearMarkers(); resetPlaced();
+
+    if(payload.self){ last.self=payload.self; place(markerSelf,labelSelf,payload.self); }
+    if(payload.pos){  last.pos =payload.pos;  place(markerPos,labelPos,payload.pos);  }
+    if(payload.neg){  last.neg =payload.neg;  place(markerNeg,labelNeg,payload.neg);  }
+
+    resultHandleEl.textContent=lastHandle;
+    resultHandleEl.style.display="block";
+	renderSummary(payload.summary);
+    renderSimilar(payload.meta);
+	renderAnalysis(payload.analysis);
+    setStatus("");
+  }catch(e){
+    clearMarkers(); resultHandleEl.style.display="none";
+    if (isTimeoutLike(e)) {
+      showError("We’re experiencing higher-than-normal traffic right now. Please try again in a moment.");
+      setStatus("");
+    }else if(e.status === 404){
+      showError(`We couldn’t find “@${escapeHtml(lastHandle)}”. Check the spelling or try a different handle.`);
+    }else if(e.status === 429){
+      showError(`We’re temporarily at capacity. Please try again in a minute.`);
+    }else if(e.status === 503){
+      showError(`We’re experiencing higher-than-normal traffic right now. Please try again in a moment.`);
+    }else{
+      showError(e.userMessage || e.message || "Request failed.");
+    }
+    setStatus("");
+  }finally{
+    stopProgress(); disableButton(false);
+  }
+}
+
+/* =========== fetch with timeout + retries ====== */
+async function fetchWithRetries(url, options, perAttemptTimeoutMs, maxRetries){
+  let attempt = 0;
+  while(true){
+    attempt++;
+    try{
+      setStatus(`Working… (attempt ${attempt}${maxRetries?"/"+(1+maxRetries):""})`);
+      const res = await fetchWithTimeout(url, options, perAttemptTimeoutMs);
+      return res; // already parsed JSON
+    }catch(err){
+      const retriable = isRetriable(err);
+      if(retriable && attempt <= (1+maxRetries)){
+        const wait = RETRY_BASE_DELAY * attempt;
+        await sleep(wait);
+        continue;
+      }
+      const msg = (err.name==="AbortError")
+        ? `Timed out after ${(perAttemptTimeoutMs/1000)|0}s.`
+        : (err.userMessage || err.message || "Request failed.");
+      const out = new Error(msg);
+      out.userMessage = msg;
+      out.status = err.status;
+      out.body   = err.body;
+      throw out;
+    }
+  }
+}
+function isRetriable(err){
+  const t = String(err && (err.message || err)).toLowerCase();
+  return err.name==="AbortError" ||
+         t.includes("timeout") || t.includes("timed out") ||
+         t.includes("network") || t.includes("failed to fetch") ||
+         t.includes("502") || t.includes("504") || t.includes("524") ||
+         t.includes("gateway") || t.includes("origin") ||
+         t.includes("temporarily") || t.includes("retry");
+}
+
+async function fetchWithTimeout(url, options, timeoutMs){
+  const controller = new AbortController();
+  const id = setTimeout(()=>controller.abort(), timeoutMs);
+  try{
+    const res = await fetch(url, {...options, signal: controller.signal});
+    const text = await res.text();
+    let json = null;
+    try{ json = text ? JSON.parse(text) : null; }catch{}
+    if(!res.ok){
+      const e = new Error(`HTTP ${res.status}`);
+      e.status = res.status;
+      e.body = json || text;
+      if(json && json.error && (json.error.message || json.error.code)){
+        e.userMessage = json.error.message || `Error: ${json.error.code}`;
+      }
+      throw e;
+    }
+    return json || {};
+  } finally {
+    clearTimeout(id);
+  }
+}
+
+/* ============ mapping / snapping ============== */
+function toPctPoint(econ,auth,label,name){
+  return {
+    x_pct:clamp01((Number(econ)-ECON_MIN)/(ECON_MAX-ECON_MIN)),
+    y_pct:clamp01(1-((Number(auth)-AUTH_MIN)/(AUTH_MAX-AUTH_MIN))),
+    label:label||"", name:name||""
+  };
+}
+function hasNums(a,b){ return typeof a==="number" && typeof b==="number" && !Number.isNaN(a) && !Number.isNaN(b); }
+function snapToCellCenter(pt,cellsX=20,cellsY=20){
+  const stepX=1/cellsX, stepY=1/cellsY;
+  const halfX=stepX/2,   halfY=stepY/2;
+  const x=Math.min(1-halfX,Math.max(halfX,pt.x_pct));
+  const y=Math.min(1-halfY,Math.max(halfY,pt.y_pct));
+  const idxX=Math.round((x-halfX)/stepX);
+  const idxY=Math.round((y-halfY)/stepY);
+  return { ...pt, x_pct:halfX+idxX*stepX, y_pct:halfY+idxY*stepY };
+}
+
+/* ============ normalize server payload ========= */
+function normalizeResponse(r){
+  const obj=r&&typeof r==="object"?r:{};
+
+  if(typeof obj.x_pct==="number" && typeof obj.y_pct==="number"){
+    const selfPt=snapToCellCenter({ x_pct:clamp01(obj.x_pct), y_pct:clamp01(obj.y_pct), label:lastHandle, name:"" });
+    return { self:selfPt, pos:null, neg:null,
+      meta:{ posName:obj.similar_good_name||"", posDescr:obj.similar_good_why||"", negName:obj.similar_bad_name||"", negDescr:obj.similar_bad_why||"" },
+      evidence:[] };
+  }
+
+  const input=obj.input||{}, pos=obj.nearest_positive||null, neg=obj.nearest_negative||null;
+  const selfPoint=hasNums(input.econ,input.auth)?toPctPoint(input.econ,input.auth,lastHandle,""):null;
+  const posPoint =(pos && hasNums(pos.econ,pos.auth))?toPctPoint(pos.econ,pos.auth,"",pos.name||""):null;
+  const negPoint =(neg && hasNums(neg.econ,neg.auth))?toPctPoint(neg.econ,neg.auth,"",neg.name||""):null;
+
+  return {
+    self: selfPoint ? snapToCellCenter(selfPoint) : null,
+    pos:  posPoint  ? snapToCellCenter(posPoint)  : null,
+    neg:  negPoint  ? snapToCellCenter(negPoint)  : null,
+    meta:{ posName:pos?.name||"", posDescr:pos?.descr||"", negName:neg?.name||"", negDescr:neg?.descr||"" },
+    summary: String(obj.summary || ""),
+	analysis: String(obj.analysis || "")
+			  
+  };
+}
+
+/* ================ place markers ================= */
+function place(dot,lbl,pt){
+  const rect = plotFrame.getBoundingClientRect();
+  const targetX = rect.width  * pt.x_pct;
+  const targetY = rect.height * pt.y_pct;
+
+  const baseRadius = dot.classList.contains("small") ? 6 : 7;
+  const {x, y} = placeNonOverlapping(targetX, targetY, {
+    radius: baseRadius, minGap: 2, maxSteps: 180, step: 3
+  });
+
+  placed.push({x, y, radius: baseRadius});
+
+  dot.style.left = x + "px";
+  dot.style.top  = y + "px";
+  dot.style.display = "block";
+
+  lbl.textContent = (pt.name?`${pt.name}`:"") + (pt.label?(pt.name?" ":"")+pt.label:"");
+
+  const out = 16;
+  let tx = x, ty = y - 12;
+  const nearL = pt.x_pct < 0.07, nearR = pt.x_pct > 0.93;
+  const nearT = pt.y_pct < 0.07, nearB = pt.y_pct > 0.93;
+  if (nearB) ty = y + out;
+  if (nearT) ty = y - out;
+  if (nearR) tx = x + out;
+  if (nearL) tx = x - out;
+
+  lbl.style.left = tx + "px";
+  lbl.style.top  = ty + "px";
+  lbl.style.display = "block";
+  lbl.style.opacity = "1";
+}
+
+function hide(dot,lbl){ dot.style.display="none"; lbl.style.display="none"; }
+function clearMarkers(){ hide(markerSelf,labelSelf); hide(markerPos,labelPos); hide(markerNeg,labelNeg); last={self:null,pos:null,neg:null}; resetPlaced(); }
+function clamp01(n){ return Math.max(0, Math.min(1, Number(n))); }
+
+window.addEventListener("resize",()=>{ 
+  resetPlaced();
+  if(last.self)place(markerSelf,labelSelf,last.self);
+  if(last.pos) place(markerPos,labelPos,last.pos);
+  if(last.neg) place(markerNeg,labelNeg,last.neg);
+});
+
+/* ================ right panel =================== */
+function renderSummary(text){
+  if(!text){
+    summaryEl.innerHTML = "";
+    return;
+  }
+  summaryEl.innerHTML = `
+    <div style="font-weight:700;margin-top:10px;margin-bottom:6px;text-align:center;text-decoration:underline;">Summary</div>
+    <div style="margin:0;color:#243447;line-height:1.5;">
+      ${escapeHtml(String(text))}
+    </div>
+  `;
+}
+function renderSimilar(meta){
+  if(!meta || (!meta.posName && !meta.negName && !meta.posDescr && !meta.negDescr)){
+    simListEl.innerHTML = "";
+    return;
+  }
+
+  const html = `
+    <div style="font-weight:700;margin-top:10px;margin-bottom:6px;text-align:center;text-decoration:underline;">Similar Figures</div>
+    <div style="margin:0;color:#243447;line-height:1.5;">
+      ${meta?.posName || meta?.posDescr ? `<strong>${escapeHtml(meta.posName||"")}</strong> — ${escapeHtml(meta.posDescr||"")}<br>` : ""}
+      ${meta?.negName || meta?.negDescr ? `<strong>${escapeHtml(meta.negName||"")}</strong> — ${escapeHtml(meta.negDescr||"")}` : ""}
+    </div>
+  `;
+  simListEl.innerHTML = html;
+}
+/* ================= Analysis Helper ===================== */
+function renderAnalysis(text){
+  if(!text){ 
+    analysisPanel.hidden = true; 
+    analysisBody.innerHTML = ""; 
+    return; 
+  }
+
+  // Clean & space
+  const dash = "[\\u2013-]"; 
+  const normalized = String(text)
+    .replace(/\r/g, '')
+    .replace(/\\u003c/gi,"<")
+    .replace(/\\u003e/gi,">")
+    .replace(/([a-z0-9\)\.])n(?=[A-Z0-9(])/g, "$1\n\n")   // joiner -> two newlines
+    .replace(/n(?=[\s\.\)])|n$/g, "")                     // trailing n
+    .replace(/\n{3,}/g, "\n\n");
+
+  // Build paragraphs/linebreaks
+  let html = "<p>" + escapeHtml(normalized)
+    .replace(/\n{2,}/g, "</p><p>")
+    .replace(/\n/g, "<br>")
+    + "</p>";
+
+const rules = [
+  // Bold any paragraph that starts with a number emoji (1️⃣ 2️⃣ 3️⃣ ...) and a title-like phrase
+  /(<p>\s*\d+️⃣\s*)([^<:.]+?)(?=\s*[:—-])/gi,
+];
+
+
+  for (const rx of rules){
+    html = html.replace(rx, (_m, pre, title) => pre ? `${pre}<strong>${title}</strong>` : `<strong>${title}</strong>`);
+  }
+
+  analysisBody.innerHTML = html;
+  analysisPanel.hidden = false;
+}
+
+
+/* ================= helpers ===================== */
+function setStatus(msg){ statusEl.textContent=msg||""; }
+function disableButton(dis){ sendBtn.disabled=!!dis; }
+function escapeHtml(s){ return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+function sleep(ms){ return new Promise(r=>setTimeout(r,ms)); }
+
+function showError(msg){
+  errorBox.textContent = msg;
+  errorBox.style.display = "block";
+}
+function hideError(){
+  errorBox.textContent = "";
+  errorBox.style.display = "none";
+}
+
+JSON.parseSafe = (t) => {
+  try {
+    return t ? JSON.parse(t) : {};
+  } catch (e) {
+    return { error: "Invalid JSON", raw: t };
+  }
+};
+
+
+/* =================== AUTOCOMPLETE (Humans only) =================== */
+const taWrap = document.getElementById('ta-wrap');
+const taList = document.getElementById('ta-list');
+let taTimer=null, taIndex=-1, taItems=[];
+
+// Caches
+const pagePropsCache = new Map();   // title -> { pageid, wikibase_item, description }
+const humanCache     = new Map();   // QID -> boolean
+
+inputEl.addEventListener('input', () => {
+  clearTimeout(taTimer);
+  const q = inputEl.value.trim();
+  if (q.length < 2) { hideTA(); return; } // avoid noisy 1-char queries
+  taTimer = setTimeout(() => loadSuggestionsHumanOnly(q), 250);
+});
+
+inputEl.addEventListener('keydown', (e) => {
+  if (taWrap.style.display !== 'block') return;
+  const max = taItems.length - 1;
+
+  if (e.key === 'ArrowDown') {
+    e.preventDefault();
+    taIndex = Math.min(max, taIndex + 1);
+    updateTAHighlight();
+  } else if (e.key === 'ArrowUp') {
+    e.preventDefault();
+    taIndex = Math.max(0, taIndex - 1);
+    updateTAHighlight();
+  } else if (e.key === 'Enter') {
+    if (taIndex >= 0) {
+      e.preventDefault();
+      chooseTA(taItems[taIndex].dataset.title);
+    }
+  } else if (e.key === 'Escape') {
+    hideTA();
+  }
+});
+
+// Hide on blur (tiny delay so clicks register)
+inputEl.addEventListener('blur', () => setTimeout(hideTA, 120));
+
+async function loadSuggestionsHumanOnly(q){
+  try{
+    // 1) Prefix search to get candidate titles
+    const titles = await prefixSearch(q, 14); // a few extra before filtering
+    if (!titles.length) { hideTA(); return; }
+
+    // 2) Resolve titles -> wikibase_item + short description (batch)
+    const withIds = await getWikibaseIds(titles);
+
+    // 3) Check which IDs are humans via Wikidata P31=Q5 (batch)
+    const ids = withIds.map(x => x.wikibase_item).filter(Boolean);
+    const humanMap = await areHumans(ids); // Map(QID => true/false)
+
+    // 4) Filter to humans and limit to 8
+    const people = withIds
+      .filter(x => x.wikibase_item && humanMap.get(x.wikibase_item))
+      .slice(0, 8);
+
+    if (!people.length) { hideTA(); return; }
+    renderTA(people.map(p => ({ title: p.title, description: p.description || "" })));
+  }catch(_){
+    hideTA();
+  }
+}
+
+/* Wikipedia: prefixsearch */
+async function prefixSearch(q, limit=12){
+  const url = new URL('https://en.wikipedia.org/w/api.php');
+  url.search = new URLSearchParams({
+    action:'query', list:'prefixsearch',
+    pssearch:q, pslimit:String(limit),
+    format:'json', origin:'*'
+  });
+  const res = await fetch(url, {
+    headers: { 'User-Agent': 'CompassAutocomplete/1.0 (you@example.com)' }
+  });
+  const data = await res.json();
+  return (data?.query?.prefixsearch || []).map(r => r.title);
+}
+
+/* Wikipedia: batch fetch pageprops (wikibase_item) + description */
+async function getWikibaseIds(titles){
+  const out = [];
+  const unknown = [];
+
+  titles.forEach(t => {
+    if (pagePropsCache.has(t)) {
+      out.push({ title: t, ...pagePropsCache.get(t) });
+    } else {
+      unknown.push(t);
+    }
+  });
+
+  if (unknown.length) {
+    const chunks = chunk(unknown, 40); // keep under URL limits
+    for (const group of chunks) {
+      const url = new URL('https://en.wikipedia.org/w/api.php');
+      url.search = new URLSearchParams({
+        action:'query',
+        prop:'pageprops|description',
+        redirects:'1',
+        titles: group.join('|'),
+        format:'json',
+        origin:'*'
+      });
+      const res = await fetch(url);
+      const data = await res.json();
+      const pages = Object.values(data?.query?.pages || {});
+      for (const p of pages) {
+        const rec = {
+          pageid: p.pageid,
+          wikibase_item: p.pageprops?.wikibase_item || null,
+          description: p.description || ""
+        };
+        const title = p.title; // normalized title
+        pagePropsCache.set(title, rec);
+        out.push({ title, ...rec });
+      }
+    }
+  }
+  const mapByTitle = new Map(out.map(o => [o.title, o]));
+  return titles.map(t => mapByTitle.get(t)).filter(Boolean);
+}
+
+/* Wikidata: batch check P31 = Q5 (human) */
+async function areHumans(ids){
+  const result = new Map();
+  const toFetch = [];
+
+  ids.forEach(id => {
+    if (humanCache.has(id)) {
+      result.set(id, humanCache.get(id));
+    } else if (!toFetch.includes(id)) {
+      toFetch.push(id);
+    }
+  });
+
+  if (toFetch.length) {
+    const chunks = chunk(toFetch, 50);
+    for (const group of chunks) {
+      const url = new URL('https://www.wikidata.org/w/api.php');
+      url.search = new URLSearchParams({
+        action:'wbgetentities',
+        ids: group.join('|'),
+        props:'claims',
+        format:'json',
+        origin:'*'
+      });
+      const res = await fetch(url);
+      const data = await res.json();
+      const entities = data?.entities || {};
+      for (const [qid, ent] of Object.entries(entities)) {
+        let isHuman = false;
+        const claims = ent?.claims?.P31 || [];
+        for (const c of claims) {
+          const id = c?.mainsnak?.datavalue?.value?.id;
+          if (id === 'Q5') { isHuman = true; break; }
+        }
+        humanCache.set(qid, isHuman);
+        result.set(qid, isHuman);
+      }
+    }
+  }
+  return result;
+}
+
+/* Render dropdown */
+function renderTA(items){
+  taList.innerHTML = items.map((r,i) => {
+    const title = r.title;
+    const desc  = r.description ? escapeHtml(r.description) : '';
+    return `<div class="ta-item" role="option" data-index="${i}" data-title="${escapeHtml(title)}">
+              <span class="ta-title">${escapeHtml(title)}</span>
+              ${desc ? `<span class="ta-desc">${desc}</span>` : ''}
+            </div>`;
+  }).join('');
+
+  taItems = Array.from(taList.querySelectorAll('.ta-item'));
+  taItems.forEach(el => {
+    el.addEventListener('mousedown', (ev) => {
+      ev.preventDefault();
+      chooseTA(ev.currentTarget.dataset.title);
+    });
+    el.addEventListener('mousemove', (ev) => {
+      taIndex = Number(ev.currentTarget.dataset.index);
+      updateTAHighlight();
+    });
+  });
+
+  taIndex = -1;
+  taWrap.style.display = 'block';
+  updateTAHighlight();
+}
+
+function updateTAHighlight(){
+  taItems.forEach((el, i) => {
+    el.setAttribute('aria-selected', i === taIndex ? 'true' : 'false');
+  });
+}
+
+function chooseTA(title){
+  inputEl.value = title.replace(/^@/, '');
+  hideTA();
+  sendData();
+}
+
+function hideTA(){
+  taWrap.style.display = 'none';
+  taList.innerHTML = '';
+  taItems = [];
+  taIndex = -1;
+}
+
+function taIsOpen(){ return taWrap.style.display === 'block'; }
+function chunk(arr, n){ const out=[]; for(let i=0;i<arr.length;i+=n) out.push(arr.slice(i,i+n)); return out; }
+</script>
+</body>
+</html>

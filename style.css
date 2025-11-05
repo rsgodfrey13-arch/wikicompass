@@ -795,6 +795,7 @@ html, body { margin: 0; }
 
 .site-header nav a {
   color: #93c5fd;
+    text-align: center;
   text-decoration: none;
   margin-left: 20px;
   font-weight: 500;

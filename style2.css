@@ -1,0 +1,108 @@
+/* === Aurora + subtle grain background === */
+:root{
+  --aurora-a:#0ea5e9;   /* cyan */
+  --aurora-b:#22c55e;   /* green */
+  --aurora-c:#8b5cf6;   /* violet */
+}
+
+body{
+  background: radial-gradient(1200px 700px at 15% -10%, rgba(255,255,255,.10), transparent 60%),
+              linear-gradient(180deg,#039be5 0%, #0284c7 45%, #0b78cf 100%) !important;
+  position: relative;
+}
+
+/* soft animated aurora */
+body::before{
+  content:"";
+  position:fixed; inset:-20% -10% -10% -10%;
+  background:
+    radial-gradient(35% 25% at 20% 20%, color-mix(in oklab, var(--aurora-a) 85%, transparent) 0%, transparent 60%),
+    radial-gradient(30% 22% at 70% 10%, color-mix(in oklab, var(--aurora-b) 80%, transparent) 0%, transparent 65%),
+    radial-gradient(28% 22% at 60% 70%, color-mix(in oklab, var(--aurora-c) 75%, transparent) 0%, transparent 65%);
+  filter: blur(40px) saturate(105%);
+  animation: floaty 18s ease-in-out infinite alternate;
+  pointer-events:none; z-index:-1; opacity:.45;
+}
+
+/* subtle grain so gradients feel less flat */
+body::after{
+  content:"";
+  position:fixed; inset:0;
+  background-image: repeating-linear-gradient(0deg, rgba(0,0,0,.04) 0 1px, transparent 1px 2px),
+                    repeating-linear-gradient(90deg, rgba(0,0,0,.03) 0 1px, transparent 1px 2px);
+  mix-blend-mode: soft-light;
+  opacity:.25; pointer-events:none; z-index:-1;
+}
+
+@keyframes floaty{
+  0%   { transform: translate3d(0,0,0) scale(1); }
+  100% { transform: translate3d(-2%,2%,0) scale(1.04); }
+}
+
+
+/* consistent “product” cards */
+.hero, #main-content, #right-panel, #analysis-panel{
+  background: color-mix(in oklab, #ffffff 90%, #eef6ff 10%);
+  border: 1px solid rgba(11, 18, 33, .08);
+  border-radius: 14px;
+  box-shadow:
+    0 8px 28px rgba(2, 6, 23, .20),
+    inset 0 1px 0 rgba(255,255,255,.6);
+}
+
+/* hero headline weight & tracking */
+.hero h2{
+  letter-spacing:.2px;
+  font-weight:800;
+}
+
+/* section spacing rhythm */
+#pc-wrap > *{ margin-inline:auto; }
+#pc-wrap > .hero{ margin-top: 70px; }
+#pc-wrap > #inputRow{ margin-top: 14px; }
+#pc-wrap > #main-content{ margin-top: 18px; }
+
+/* buttons */
+button{
+  background: linear-gradient(180deg,#0f172a 0%, #0b1222 100%);
+  border: 1px solid rgba(255,255,255,.08);
+  box-shadow: 0 8px 22px rgba(2,6,23,.25);
+}
+button:hover{ transform: translateY(-1px); box-shadow: 0 12px 28px rgba(2,6,23,.30); }
+button:active{ transform: translateY(0); }
+
+/* inputs */
+input{
+  background:#ffffff;
+  color:#0f172a;
+  border:1px solid rgba(15,23,42,.15);
+  box-shadow: 0 2px 10px rgba(2,6,23,.10) inset;
+}
+input:focus{
+  outline: none;
+  border-color:#60a5fa;
+  box-shadow: 0 0 0 4px rgba(96,165,250,.25);
+}
+
+.site-header{
+  background: rgba(17,24,39,.95);
+  backdrop-filter: saturate(120%) blur(6px);
+  box-shadow: 0 10px 30px rgba(2,6,23,.35);
+}
+
+.site-footer{
+  margin-top: 28px;
+  padding: 18px 0;
+  color:#e5e7eb;
+  background: rgba(2,6,23,.65);
+  backdrop-filter: blur(6px);
+  border-top: 1px solid rgba(255,255,255,.06);
+}
+.footer-inner{
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 16px;
+  display: flex; gap: 16px;
+  justify-content: space-between; align-items: center;
+  font-size: 14px; letter-spacing:.2px;
+}

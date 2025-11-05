@@ -22,6 +22,30 @@
   </nav>
 </header>
 
+<!-- QUICK SHARE (link-based, fast like YouTube) -->
+<button id="quick-share-open" class="share-btn">🚀 Quick Share</button>
+
+<div id="qs-overlay" hidden>
+  <div id="qs-modal" role="dialog" aria-modal="true" aria-labelledby="qs-title">
+    <div class="qs-header">
+      <h3 id="qs-title">Share</h3>
+      <button id="qs-close" aria-label="Close">✕</button>
+    </div>
+    <div class="qs-grid">
+      <a id="qs-x"         class="qs-item">𝕏</a>
+      <a id="qs-fb"        class="qs-item">f</a>
+      <a id="qs-reddit"    class="qs-item">r</a>
+      <a id="qs-linkedin"  class="qs-item">in</a>
+      <a id="qs-whatsapp"  class="qs-item">wa</a>
+      <a id="qs-telegram"  class="qs-item">tg</a>
+    </div>
+    <div class="qs-copy">
+      <input id="qs-url" readonly>
+      <button id="qs-copy-btn">Copy</button>
+    </div>
+  </div>
+</div>
+
 
 	
 <div id="pc-wrap">
@@ -49,11 +73,7 @@ The Political Compass Analyzer uses AI to read an entire Wikipedia page in secon
     <div id="progress"><div id="progress-bar"></div></div>
     <div id="progress-text">Analyzing… 0%</div>
   </div>
-<!-- Share toolbar -->
-<div id="share-toolbar" aria-label="Share this result">
-  <button id="share-link" class="share-btn">🔗 Share Link</button>
-  <button id="share-image" class="share-btn alt">🖼️ Share Image</button>
-</div>
+
 
   <div id="main-content">
     <div id="compass-wrap">
@@ -818,93 +838,60 @@ function taIsOpen(){ return taWrap.style.display === 'block'; }
 function chunk(arr, n){ const out=[]; for(let i=0;i<arr.length;i+=n) out.push(arr.slice(i,i+n)); return out; }
 </script>
 
-<!-- html2canvas library -->
-<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 
-<!-- SHARE LOGIC -->
 <script>
-// --- SHARE: make sure it's visible for testing
-// document.getElementById('share-toolbar')?.style.display = 'flex';
+  // --- QUICK SHARE ---
+  const qs = {
+    openBtn:  document.getElementById('quick-share-open'),
+    overlay:  document.getElementById('qs-overlay'),
+    closeBtn: document.getElementById('qs-close'),
+    urlInput: document.getElementById('qs-url'),
+    copyBtn:  document.getElementById('qs-copy-btn'),
+    x:        document.getElementById('qs-x'),
+    fb:       document.getElementById('qs-fb'),
+    rd:       document.getElementById('qs-reddit'),
+    li:       document.getElementById('qs-linkedin'),
+    wa:       document.getElementById('qs-whatsapp'),
+    tg:       document.getElementById('qs-telegram'),
+  };
 
-// Attach handlers immediately (script is after the markup)
-document.getElementById('share-link')?.addEventListener('click', shareLink);
-document.getElementById('share-image')?.addEventListener('click', shareImage);
-
-// Keep this if you want it to auto-show after results too:
-function showShareBar() {
-  const bar = document.getElementById('share-toolbar');
-  if (bar) bar.style.display = 'flex';
-}
-
-// Share a link (native share if possible, else copy to clipboard)
-async function shareLink(){
-  const title = document.title || 'Compass Analyzer';
-  const person = (typeof lastHandle === 'string' && lastHandle) ? lastHandle : 'this result';
-  const text = `${person} • Compass Analyzer`;
-  const url = window.location.href;
-
-  if (navigator.share) {
-    try { await navigator.share({ title, text, url }); return; }
-    catch(_) { /* user canceled */ }
+  function getShareText(){
+    const handle = (typeof window.lastHandle === 'string' && window.lastHandle) ? window.lastHandle : 'this result';
+    return `${handle} • Compass Analyzer`;
   }
-  try {
-    await navigator.clipboard.writeText(url);
-    alert('Link copied to clipboard!');
-  } catch {
-    prompt('Copy this URL:', url);
+
+  function getShareUrl(){
+    return window.location.href;
   }
-}
 
-// Share an image of the graph + right panel only
-async function shareImage(){
-  const el = document.getElementById('main-content'); // graph + right panel
-  if (!el) return alert('Nothing to share yet.');
+  function setIntentLinks(){
+    const text = encodeURIComponent(getShareText());
+    const url  = encodeURIComponent(getShareUrl());
+    qs.urlInput.value = decodeURIComponent(url);
+    qs.x.href  = `https://twitter.com/intent/tweet?text=${text}&url=${url}`;
+    qs.fb.href = `https://www.facebook.com/sharer/sharer.php?u=${url}`;
+    qs.rd.href = `https://www.reddit.com/submit?url=${url}&title=${text}`;
+    qs.li.href = `https://www.linkedin.com/sharing/share-offsite/?url=${url}`;
+    qs.wa.href = `https://api.whatsapp.com/send?text=${text}%20${url}`;
+    qs.tg.href = `https://t.me/share/url?url=${url}&text=${text}`;
+    [qs.x,qs.fb,qs.rd,qs.li,qs.wa,qs.tg].forEach(a=>{
+      a.target='_blank'; a.rel='noopener noreferrer';
+    });
+  }
 
-  const canvas = await html2canvas(el, {
-    backgroundColor: null,
-    scale: window.devicePixelRatio > 1 ? 2 : 1
+  function openQS(){ setIntentLinks(); qs.overlay.hidden = false; }
+  function closeQS(){ qs.overlay.hidden = true; }
+
+  qs.openBtn?.addEventListener('click', openQS);
+  qs.closeBtn?.addEventListener('click', closeQS);
+  qs.overlay?.addEventListener('click', e=>{ if(e.target===qs.overlay) closeQS(); });
+  qs.copyBtn?.addEventListener('click', async ()=>{
+    try { await navigator.clipboard.writeText(getShareUrl()); alert('Link copied!'); }
+    catch { prompt('Copy link:', getShareUrl()); }
   });
-
-  const blob = await new Promise(res => canvas.toBlob(res, 'image/png', 0.95));
-  if (!blob) return alert('Could not create image.');
-  const fileName = (lastHandle ? lastHandle.replace(/\W+/g,'_') : 'compass') + '_result.png';
-  const file = new File([blob], fileName, { type: 'image/png' });
-
-  if (navigator.canShare && navigator.canShare({ files: [file] })) {
-    try {
-      await navigator.share({
-        files: [file],
-        title: document.title,
-        text: (lastHandle ? `${lastHandle} • ` : '') + 'Compass Analyzer result'
-      });
-      return;
-    } catch (_) { /* fall through to download */ }
-  }
-
-  const dlUrl = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = dlUrl;
-  a.download = fileName;
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  URL.revokeObjectURL(dlUrl);
-}
-
-// Auto-show after a result renders
-const _renderSummary = renderSummary;
-renderSummary = function(text){
-  _renderSummary(text);
-  showShareBar();
-};
-
-const _showNeutralState = showNeutralState;
-showNeutralState = function(reason, axes, uncertainty){
-  _showNeutralState(reason, axes, uncertainty);
-  showShareBar();
-};
 </script>
 
+	
 </body>
 </html>
 

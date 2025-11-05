@@ -577,19 +577,8 @@ html, body { overflow-x: hidden; }
   scrollbar-width: none;
 }
 
-/* === SOLID BLUE PAGE BG (no gradients) — drop-in override === */
-:root { --page-blue: #0AA1E2; }  /* pick your exact blue here */
 
-.wiki-theme body,
-body {
-  background: var(--page-blue) !important;   /* solid only */
-  background-image: none !important;         /* nuke gradients if set elsewhere */
-}
 
-/* If GoDaddy wrappers paint a color, make them transparent so the blue shows */
-.site, .page, .section, .container, .row, .cols, .grid, .content {
-  background: transparent !important;
-}
 
 /* ===== Analysis card (bottom, full width) ===== */
 #analysis-panel{

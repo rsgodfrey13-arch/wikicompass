@@ -823,3 +823,140 @@ html, body { margin: 0; }
 body {
   padding-top: 70px; /* keeps content below header */
 }
+
+
+/**** =======================
+     POLISH + PALETTE OVERRIDES
+     (Drop this AFTER your existing CSS)
+     ======================= ****/
+
+/* 0) If you have a “SOLID BLUE” section that sets:
+      body { background: var(--page-blue) !important; background-image:none !important; }
+   …delete it or this won’t show.                                     */
+
+/* 1) Brand tokens (colors only) */
+:root{
+  --brand:       #00A676;
+  --brand-dark:  #067a61;
+  --ink:         #0F172A;
+  --muted:       #5B6577;
+  --paper:       #ffffff;
+  --offwhite:    #f4f6f8;
+  --line:        #dbe2ea;
+  --shadow:      rgba(0,0,0,.25);
+  --radius:      14px;  /* rounded edges without changing size */
+}
+
+/* 2) Global font + page bg (colors only; no sizing) */
+/* Add in <head> if you want Manrope:
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&display=swap" rel="stylesheet">
+*/
+body{
+  font-family: "Manrope","Segoe UI",Roboto,system-ui,-apple-system,sans-serif !important;
+  color: #eaf6ff;
+  /* Clean teal→blue gradient with subtle glow */
+  background:
+    radial-gradient(1200px 750px at 12% -8%, rgba(255,255,255,.10), transparent 60%),
+    linear-gradient(180deg, #00b7ff 0%, #0aa1e2 45%, #0b78cf 100%) !important;
+}
+
+/* 3) Header (colors only) */
+.site-header{
+  background:#0f172a !important;
+  color:#e5e7eb !important;
+  box-shadow: 0 2px 10px var(--shadow) !important;
+}
+.site-header nav a{
+  color:#93c5fd !important;
+  font-weight:600;
+  letter-spacing:.2px;
+}
+.site-header nav a:hover{ color:#60a5fa !important; }
+
+/* 4) Hero card – keep your dimensions; just style */
+.hero{
+  background: linear-gradient(180deg, rgba(255,255,255,0.96), rgba(255,255,255,0.90)) !important;
+  border:1px solid rgba(0,0,0,0.06) !important;
+  color: var(--ink) !important;
+  border-radius: var(--radius) !important;
+  box-shadow: 0 10px 24px var(--shadow) !important;
+}
+.hero h2{
+  color:#0b1324 !important;
+  text-shadow:none !important;
+  letter-spacing:.2px !important;
+  font-weight:800 !important;
+}
+.hero p{
+  color:#364152 !important;
+}
+
+/* 5) Main content + right panel “paper” look */
+#main-content,
+#right-panel{
+  background: var(--offwhite) !important;
+  color: var(--ink) !important;
+  border: 1px solid var(--line) !important;
+  border-radius: var(--radius) !important;
+  box-shadow: 0 12px 30px var(--shadow) !important;
+}
+
+/* 6) Inputs (readable on light or dark) */
+input{
+  background:#ffffff !important;
+  color:#0f172a !important;
+  border:1px solid #cbd5e1 !important;
+}
+input::placeholder{ color:#98a6b8 !important; }
+input:focus{
+  border-color:#60a5fa !important;
+  box-shadow: 0 0 0 3px rgba(96,165,250,.35) !important;
+  outline: none !important;
+}
+
+/* 7) Buttons: brandy dark-blue CTA */
+button{
+  background:#243447 !important;
+  color:#fff !important;
+  border:none !important;
+  border-radius: 10px !important;
+  box-shadow: 0 6px 18px rgba(0,0,0,.28) !important;
+  font-weight: 700 !important;
+  letter-spacing:.25px;
+}
+button:hover{ background:#1e2d3d !important; }
+button:active{ transform: translateY(1px); }
+
+/* 8) Axis labels (more contrast on light cards) */
+#label-top,#label-bottom,#label-left,#label-right{
+  color:#5f6b7b !important;
+  text-shadow:none !important;
+}
+
+/* 9) Compass quadrant colors (richer but same structure) */
+#plot{
+  background-image:
+    repeating-linear-gradient(to right, transparent 0 calc(var(--cell) - 1px), rgba(255,255,255,.12) calc(var(--cell) - 1px) var(--cell)),
+    repeating-linear-gradient(to bottom, transparent 0 calc(var(--cell) - 1px), rgba(255,255,255,.12) calc(var(--cell) - 1px) var(--cell)),
+    linear-gradient(#ef4444,#b91c1c),  /* top-left   */
+    linear-gradient(#60a5fa,#2563eb),  /* top-right  */
+    linear-gradient(#34d399,#059669),  /* bottom-left*/
+    linear-gradient(#c084fc,#7c3aed)   /* bottom-right*/
+    !important;
+}
+
+/* 10) Evidence/side text contrast */
+#similarList strong{ color:#0f172a !important; }
+#evidenceBlock li{ color:#263244 !important; }
+
+/* 11) Footer text tint (if you show one) */
+footer, .footer, #footer{
+  color:#d7e5ff !important;
+  opacity:.9;
+}
+
+/* 12) Subtle universal polish (no layout change) */
+.hero, #main-content, #right-panel, input, button{
+  border-radius: var(--radius) !important;
+}
+

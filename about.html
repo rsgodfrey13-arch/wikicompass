@@ -814,6 +814,13 @@ function hideTA(){
 function taIsOpen(){ return taWrap.style.display === 'block'; }
 function chunk(arr, n){ const out=[]; for(let i=0;i<arr.length;i+=n) out.push(arr.slice(i,i+n)); return out; }
 
+
+
+
+</script>
+
+
+<script>	
 // --- SHARE: show toolbar once we have something to share ---
 function showShareBar() {
   const bar = document.getElementById('share-toolbar');
@@ -905,12 +912,7 @@ showNeutralState = function(reason, axes, uncertainty){
   _showNeutralState(reason, axes, uncertainty);
   showShareBar();
 };
-
-
-	
 </script>
-
-
 
 </body>
 

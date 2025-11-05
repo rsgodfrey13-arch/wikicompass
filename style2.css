@@ -966,3 +966,21 @@ footer, .footer, #footer{
   border-radius: var(--radius) !important;
 }
 
+/* Make footer a normal full-width bar, centered */
+footer, .footer, #footer {
+  position: static !important;
+  float: none !important;
+  right: auto !important;
+  left: auto !important;
+
+  display: block !important;
+  width: 100% !important;
+  box-sizing: border-box;
+  margin: 24px 0 0 !important;
+  padding: 10px 16px;
+
+  background: rgba(15,23,42,.75);   /* same dark header vibe */
+  color: #e5e7eb;
+  text-align: center !important;
+  border-radius: 8px;
+}

@@ -1,0 +1,104 @@
+<!-- HOW IT WORKS (SECTION-ONLY, NO NAV/NO PAGE BG) -->
+<section id="hiw" style="--brand:#00A676; --max:900px;">
+  <div class="hiw-card">
+    <div class="hiw-hero">
+      <h1>How It Works</h1>
+      <p>Fast, explainable analysis of public Twitter/X posts — mapped to a political compass with clear reasoning.</p>
+    </div>
+
+    <div class="hiw-content">
+      <div class="hiw-tldr">
+        <strong>TL;DR:</strong> Enter a public Twitter/X handle and hit analyze. We fetch recent public posts, clean the text,
+        extract topic & tone signals, and plot the account on two axes (economic & social). We also show which public figures
+        their language most closely aligns with — plus a short “why.”
+      </div>
+
+      <h2>Step-by-step</h2>
+      <ol>
+        <li><strong>Fetch public tweets.</strong> Only public posts — no private data, no paywalled content. We use a recent sample for up-to-date results.</li>
+        <li><strong>Clean & normalize.</strong> Strip links/headers, expand contractions, translate emojis to sentiment so models focus on ideas, not formatting.</li>
+        <li><strong>Analyze signals.</strong> Lightweight models assess sentiment/strength, recurring policy themes (economy, liberty, governance, etc.), and linguistic markers tied to social/economic viewpoints.</li>
+        <li><strong>Map to the compass.</strong> Signals are combined into two axes: economic (left ↔ right) and social (authoritarian ↔ libertarian), then scaled to the grid you see.</li>
+        <li><strong>Find closest public figures.</strong> We compare the account’s linguistic fingerprint to a curated library of public figures and display the closest matches with a quick explanation.</li>
+        <li><strong>Show context, not judgment.</strong> You’ll see the reasoning and examples that influenced the placement so you can judge for yourself.</li>
+      </ol>
+
+      <hr class="hiw-hr" />
+
+      <h2>Privacy & ethics</h2>
+      <ul>
+        <li>Only <strong>public</strong> tweets are analyzed — no DMs, no private accounts.</li>
+        <li>No long-term personal data storage; temporary caching is used only for performance.</li>
+        <li>Results are probabilistic. This is for insight and discussion — not targeting or harassment.</li>
+      </ul>
+
+      <hr class="hiw-hr" />
+
+      <h2>Accuracy & limitations</h2>
+      <ul>
+        <li>Very low-activity accounts produce noisier results.</li>
+        <li>Sarcasm, quotes, and cultural context can shift interpretation.</li>
+        <li>We prioritize clarity and speed over academic-style depth.</li>
+      </ul>
+
+      <hr class="hiw-hr" />
+
+      <section class="hiw-built">
+        <h2>Built by Auto Workforce</h2>
+        <p>
+          This tool was engineered by <strong><a href="https://auto-workforce.com" target="_blank" rel="noopener">Auto Workforce</a></strong> — a modern automation studio that builds
+          <em>custom integrations</em>, <em>AI tools</em>, and <em>end-to-end workflow systems</em> for businesses that want real results fast.
+        </p>
+        <p>
+          We connect platforms, automate repetitive work, and create data-driven tools like this one — practical tech that looks simple on the surface but runs on serious engineering underneath.
+        </p>
+        <p>
+          Want something like this for your company?
+          Email <a href="mailto:solutions@auto-workforce.com">solutions@auto-workforce.com</a> to learn what kinds of integrations and projects we can build for your business,
+          or visit <a href="https://auto-workforce.com" target="_blank" rel="noopener">auto-workforce.com</a>.
+        </p>
+      </section>
+    </div>
+  </div>
+
+  <style>
+    /* Scope everything to #hiw to avoid conflicts with GoDaddy’s styles */
+    #hiw{display:block}
+    #hiw .hiw-card{
+      max-width:var(--max);
+      margin:0 auto;
+      background:#fff;
+      border:1px solid #e8e8e8;
+      border-radius:16px;
+      box-shadow:0 10px 30px rgba(0,0,0,.08);
+      overflow:hidden;
+    }
+    #hiw .hiw-hero{
+      background:linear-gradient(135deg, var(--brand) 0%, #0f2f28 100%);
+      color:#f1f1f1;
+      padding:28px 24px;
+    }
+    #hiw .hiw-hero h1{margin:0 0 6px;font-size:28px;letter-spacing:.2px}
+    #hiw .hiw-hero p{margin:0;opacity:.95}
+    #hiw .hiw-content{padding:26px 24px}
+    #hiw h2{margin:24px 0 10px;font-size:20px;color:#111}
+    #hiw p{margin:8px 0 14px;line-height:1.6;color:#222}
+    #hiw ul, #hiw ol{margin:10px 0 18px 22px;line-height:1.6;color:#222}
+    #hiw li{margin:6px 0}
+    #hiw .hiw-hr{border:0;height:1px;background:#e8e8e8;margin:18px 0}
+    #hiw .hiw-tldr{
+      border-left:4px solid var(--brand);
+      background:#f7fcfa;
+      padding:14px 14px 14px 16px;
+      border-radius:10px;
+    }
+    #hiw .hiw-built{
+      background:#fbfffd;border:1px solid #e6f3ee;padding:16px;border-radius:12px
+    }
+    #hiw .hiw-built a{color:var(--brand);text-decoration:none}
+    #hiw .hiw-built a:hover{text-decoration:underline}
+    @media (max-width:540px){
+      #hiw .hiw-hero h1{font-size:22px}
+    }
+  </style>
+</section>

@@ -984,3 +984,28 @@ footer, .footer, #footer {
   text-align: center !important;
   border-radius: 8px;
 }
+
+
+  #share-toolbar{
+    display:none;              /* shown after a result is rendered */
+    gap:12px;
+    margin: 10px 0 16px;
+    align-items:center;
+  }
+  .share-btn{
+    background:#00A676;
+    color:#fff;
+    border:0;
+    border-radius:10px;
+    padding:12px 16px;
+    font-size:16px;
+    font-weight:700;
+    cursor:pointer;
+    box-shadow:0 4px 12px rgba(0,0,0,.15);
+    transition:transform .06s ease, opacity .2s ease, background .2s ease;
+  }
+  .share-btn:hover{ background:#009060; transform:translateY(-1px); }
+  .share-btn:active{ transform:translateY(0); }
+  .share-btn.alt{ background:#111827; }
+  .share-btn.alt:hover{ background:#0b1220; }
+

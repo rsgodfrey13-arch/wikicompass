@@ -774,28 +774,42 @@ html, body { margin: 0; }
 .site-header {
   background: #111827;
   color: white;
-  text-align: center;
   width: 100%;
   padding: 16px 0;
   display: flex;
-  flex-direction: column;          /* stack title + links vertically */
-  justify-content: center;         /* center them vertically */
-  align-items: center;             /* center horizontally */
-  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  justify-content: center;        /* center all content horizontally */
+  align-items: center;
   position: fixed;
   top: 0;
   left: 0;
   z-index: 10;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  padding: 10px 30px;
+}
+
+/* container to hold both the title and the nav */
+.site-header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;        /* ensures nav centered in the whole width */
+  width: 100%;
+  position: relative;
 }
 
 .site-header h1 {
+  position: absolute;             /* keeps title locked on the left side */
+  left: 30px;
   font-size: 1.5rem;
-  margin: 0 0 8px 0;  /* small gap below title */
+  margin: 0;
+}
+
+.site-header nav {
+  text-align: center;
+  width: 100%;                    /* take full width so links can center */
 }
 
 .site-header nav a {
   color: #93c5fd;
-  text-align: center;
   text-decoration: none;
   margin: 0 20px;
   font-weight: 500;
@@ -807,7 +821,7 @@ html, body { margin: 0; }
 }
 
 body {
-  padding-top: 90px; /* pushes content below fixed header */
+  padding-top: 70px; /* keeps content below header */
 }
 
 

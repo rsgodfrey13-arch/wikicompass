@@ -17,6 +17,9 @@
   </nav>
 </header>
 
+	    <!-- Script for share button -->
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+
 <body>
 <div id="pc-wrap">
 
@@ -43,6 +46,11 @@ The Political Compass Analyzer uses AI to read an entire Wikipedia page in secon
     <div id="progress"><div id="progress-bar"></div></div>
     <div id="progress-text">Analyzing… 0%</div>
   </div>
+<!-- Share toolbar -->
+<div id="share-toolbar" aria-label="Share this result">
+  <button id="share-link" class="share-btn">🔗 Share Link</button>
+  <button id="share-image" class="share-btn alt">🖼️ Share Image</button>
+</div>
 
   <div id="main-content">
     <div id="compass-wrap">
@@ -805,6 +813,101 @@ function hideTA(){
 
 function taIsOpen(){ return taWrap.style.display === 'block'; }
 function chunk(arr, n){ const out=[]; for(let i=0;i<arr.length;i+=n) out.push(arr.slice(i,i+n)); return out; }
+
+// --- SHARE: show toolbar once we have something to share ---
+function showShareBar() {
+  const bar = document.getElementById('share-toolbar');
+  if (bar) bar.style.display = 'flex';
+}
+
+// Wire up buttons once DOM is ready
+window.addEventListener('DOMContentLoaded', () => {
+  const linkBtn  = document.getElementById('share-link');
+  const imageBtn = document.getElementById('share-image');
+
+  if (linkBtn)  linkBtn.addEventListener('click', shareLink);
+  if (imageBtn) imageBtn.addEventListener('click', shareImage);
+});
+
+// Share a link (native share if possible, else copy to clipboard)
+async function shareLink(){
+  const title = document.title || 'Compass Analyzer';
+  const person = (typeof lastHandle === 'string' && lastHandle) ? lastHandle : 'this result';
+  const text = `${person} • Compass Analyzer`;
+
+  // Optional: if you ever add query params for deep links, set url here
+  const url = window.location.href;
+
+  if (navigator.share) {
+    try { await navigator.share({ title, text, url }); return; }
+    catch(_) { /* user canceled or failed */ }
+  }
+  try {
+    await navigator.clipboard.writeText(url);
+    alert('Link copied to clipboard!');
+  } catch {
+    prompt('Copy this URL:', url);
+  }
+}
+
+// Share an image of the graph + right panel only
+async function shareImage(){
+  const el = document.getElementById('main-content'); // graph + right panel
+  if (!el) return alert('Nothing to share yet.');
+
+  // Render to canvas
+  const canvas = await html2canvas(el, {
+    backgroundColor: null,    // keep page background
+    scale: window.devicePixelRatio > 1 ? 2 : 1
+  });
+
+  // Canvas -> Blob -> File
+  const blob = await new Promise(res => canvas.toBlob(res, 'image/png', 0.95));
+  if (!blob) return alert('Could not create image.');
+  const fileName = (lastHandle ? lastHandle.replace(/\W+/g,'_') : 'compass') + '_result.png';
+  const file = new File([blob], fileName, { type: 'image/png' });
+
+  // If the browser can share files, use native share
+  if (navigator.canShare && navigator.canShare({ files: [file] })) {
+    try {
+      await navigator.share({
+        files: [file],
+        title: document.title,
+        text: (lastHandle ? `${lastHandle} • ` : '') + 'Compass Analyzer result'
+      });
+      return;
+    } catch (_) { /* fall through to download */ }
+  }
+
+  // Fallback: download the image
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = fileName;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+
+// === Hook into your existing flow to show the buttons after a result ===
+// After a successful analyze (both neutral and non-neutral), call showShareBar().
+
+const _renderSummary = renderSummary;
+renderSummary = function(text){
+  _renderSummary(text);
+  showShareBar();  // show once we have something in the right panel
+};
+
+// In the neutral path, also make sure to show:
+const _showNeutralState = showNeutralState;
+showNeutralState = function(reason, axes, uncertainty){
+  _showNeutralState(reason, axes, uncertainty);
+  showShareBar();
+};
+
+
+	
 </script>
 
 

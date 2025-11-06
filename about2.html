@@ -1,34 +1,81 @@
 <!doctype html>
 <html lang="en" class="wiki-theme">
 <head>
-<script>(function(s){s.dataset.zone='10133093',s.src='https://forfrogadiertor.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta charset="utf-8" />
-<title>Wikipedia Political Compass</title>
-<link rel="stylesheet" href="style2.css">
-<style>
-  /* Minimal styles for the Share Results UI */
-  #share-cta { display:flex; justify-content:center; margin:12px 0 4px; }
-  #open-share { padding:10px 14px; border-radius:12px; border:1px solid var(--border,#E6E8EF); background:var(--card,#fff); font-weight:600; cursor:pointer; }
-  #share-overlay[hidden] { display:none; }
-  #share-overlay { position:fixed; inset:0; background:rgba(15,23,42,.35); display:flex; align-items:center; justify-content:center; z-index:9999; }
-  #share-modal { width:min(560px, calc(100vw - 32px)); background:var(--card,#fff); border:1px solid var(--border,#E6E8EF); border-radius:16px; box-shadow:0 10px 40px rgba(0,0,0,.18); }
-  .sm-head { display:flex; align-items:center; justify-content:space-between; padding:12px 14px; border-bottom:1px solid var(--border,#E6E8EF); }
-  .sm-title { margin:0; font-size:18px; font-weight:700; }
-  .sm-close { border:none; background:transparent; font-size:18px; cursor:pointer; }
-  .sm-body { padding:14px; display:grid; gap:14px; }
-  .row { display:grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap:10px; }
-  .btn { padding:10px 12px; border-radius:12px; border:1px solid var(--border,#E6E8EF); background:var(--card,#fff); font-weight:600; cursor:pointer; text-align:center; }
-  .btn.primary { background:#0F172A; color:#fff; }
-  .btn.icon { display:flex; gap:8px; align-items:center; justify-content:center; }
-  .row.links { grid-template-columns: repeat(4, minmax(0,1fr)); }
-  .link { text-decoration:none; }
-  .copy-bar { display:grid; grid-template-columns:1fr auto; gap:8px; }
-  #share-url { width:100%; padding:10px 12px; border:1px solid var(--border,#E6E8EF); border-radius:12px; font-family:inherit; }
-  .hint { font-size:12px; color:var(--muted,#5B6577); text-align:center; margin-top:-6px; }
-  /* helpful when capturing with html2canvas */
-  .capture-mode * { transition:none !important; animation:none !important; }
-</style>
+  <script>(function(s){s.dataset.zone='10133093',s.src='https://forfrogadiertor.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta charset="utf-8" />
+  <title>Wikipedia Political Compass</title>
+  <link rel="stylesheet" href="style2.css">
+
+  <style>
+    /* ---------- minimal overrides (safe even with style2.css) ---------- */
+
+    :root{
+      --quad-red-1:#ef4444;  --quad-red-2:#b91c1c;
+      --quad-blue-1:#3b82f6; --quad-blue-2:#1d4ed8;
+      --quad-green-1:#22c55e;--quad-green-2:#065f46;
+      --quad-purple-1:#a855f7;--quad-purple-2:#6d28d9;
+      --plot-radius:16px;
+    }
+
+    /* Plot frame keeps your rounded container */
+    #plot-frame{
+      position:relative;
+      border-radius:var(--plot-radius);
+      background:rgba(255,255,255,.75);
+      box-shadow: 0 10px 36px rgba(0,0,0,.10), inset 0 1px 0 rgba(255,255,255,.35);
+      padding:0;           /* important for capture bounds */
+      overflow:hidden;     /* keep children inside curve */
+    }
+
+    /* The actual square plot */
+    #plot{
+      position:relative;
+      width:100%;
+      height:100%;
+      border-radius:inherit;
+      /* 4 quadrants (bottom layer) */
+      background:
+        /* quadrants (4 layers) */
+        linear-gradient(180deg,var(--quad-red-1),var(--quad-red-2)) 0 0 / 50% 50% no-repeat,
+        linear-gradient(180deg,var(--quad-blue-1),var(--quad-blue-2)) 100% 0 / 50% 50% no-repeat,
+        linear-gradient(180deg,var(--quad-green-1),var(--quad-green-2)) 0 100% / 50% 50% no-repeat,
+        linear-gradient(180deg,var(--quad-purple-1),var(--quad-purple-2)) 100% 100% / 50% 50% no-repeat,
+        /* grid (top layers) */
+        repeating-linear-gradient(0deg, rgba(255,255,255,.06) 0, rgba(255,255,255,.06) 1px, transparent 1px, transparent 24px),
+        repeating-linear-gradient(90deg,rgba(255,255,255,.06) 0, rgba(255,255,255,.06) 1px, transparent 1px, transparent 24px);
+      background-blend-mode: normal;
+      box-shadow: inset 0 10px 36px rgba(0,0,0,.18), inset 0 -10px 36px rgba(0,0,0,.20);
+    }
+
+    /* Dots/labels (in case style2.css doesn't include) */
+    .dot{position:absolute;width:12px;height:12px;border-radius:50%;background:#111;box-shadow:0 2px 6px rgba(0,0,0,.25);display:none}
+    .dot.small{width:10px;height:10px}
+    .tag{position:absolute;padding:6px 10px;border-radius:10px;background:#fff;border:1px solid rgba(0,0,0,.08);box-shadow:0 6px 20px rgba(0,0,0,.15);font-size:12px;display:none;white-space:nowrap;user-select:none}
+
+    /* Share UI + capture helpers (yours) */
+    #share-cta { display:flex; justify-content:center; margin:12px 0 4px; }
+    #open-share { padding:10px 14px; border-radius:12px; border:1px solid var(--border,#E6E8EF); background:var(--card,#fff); font-weight:600; cursor:pointer; }
+    #share-overlay[hidden] { display:none; }
+    #share-overlay { position:fixed; inset:0; background:rgba(15,23,42,.35); display:flex; align-items:center; justify-content:center; z-index:9999; }
+    #share-modal { width:min(560px, calc(100vw - 32px)); background:var(--card,#fff); border:1px solid var(--border,#E6E8EF); border-radius:16px; box-shadow:0 10px 40px rgba(0,0,0,.18); }
+    .sm-head { display:flex; align-items:center; justify-content:space-between; padding:12px 14px; border-bottom:1px solid var(--border,#E6E8EF); }
+    .sm-title { margin:0; font-size:18px; font-weight:700; }
+    .sm-close { border:none; background:transparent; font-size:18px; cursor:pointer; }
+    .sm-body { padding:14px; display:grid; gap:14px; }
+    .row { display:grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap:10px; }
+    .btn { padding:10px 12px; border-radius:12px; border:1px solid var(--border,#E6E8EF); background:var(--card,#fff); font-weight:600; cursor:pointer; text-align:center; }
+    .btn.primary { background:#0F172A; color:#fff; }
+    .btn.icon { display:flex; gap:8px; align-items:center; justify-content:center; }
+    .row.links { grid-template-columns: repeat(4, minmax(0,1fr)); }
+    .link { text-decoration:none; }
+    .copy-bar { display:grid; grid-template-columns:1fr auto; gap:8px; }
+    #share-url { width:100%; padding:10px 12px; border:1px solid var(--border,#E6E8EF); border-radius:12px; font-family:inherit; }
+    .hint { font-size:12px; color:var(--muted,#5B6577); text-align:center; margin-top:-6px; }
+
+    /* helpful when capturing with html2canvas */
+    .capture-mode * { transition:none !important; animation:none !important; }
+  </style>
 </head>
 
 <body>
@@ -82,7 +129,8 @@
   <div class="hero">
     <h2>Welcome to the Wikipedia Political Compass Analyzer</h2>
     <p>
-The Political Compass Analyzer uses AI to read an entire Wikipedia page in seconds. It sums up a person’s political views and shows where they fit on the political compass below.    </p>
+      The Political Compass Analyzer uses AI to read an entire Wikipedia page in seconds. It sums up a person’s political views and shows where they fit on the political compass below.
+    </p>
   </div>
 
   <div id="inputRow">
@@ -114,11 +162,11 @@ The Political Compass Analyzer uses AI to read an entire Wikipedia page in secon
         <div id="marker-self" class="dot"></div>
         <div id="label-self"  class="tag"></div>
 
-         <div id="marker-pos" class="dot small"></div> 
-         <div id="label-pos"  class="tag small"></div> 
+        <div id="marker-pos" class="dot small"></div>
+        <div id="label-pos"  class="tag small"></div>
 
-         <div id="marker-neg" class="dot small"></div> 
-         <div id="label-neg"  class="tag small"></div> 
+        <div id="marker-neg" class="dot small"></div>
+        <div id="label-neg"  class="tag small"></div>
       </div>
 
       <div id="label-right">Right</div>
@@ -126,7 +174,7 @@ The Political Compass Analyzer uses AI to read an entire Wikipedia page in secon
     </div>
 
     <div id="right-panel">
-	  <div id="evidenceBlock"></div>
+      <div id="evidenceBlock"></div>
       <div id="similarList"></div>
     </div>
   </div>
@@ -156,73 +204,17 @@ const plotFrame = document.getElementById("plot-frame"),
       analyzingEl=document.getElementById("analyzingBlock"),
       sendBtn   = document.getElementById("sendBtn"),
       inputEl   = document.getElementById("userInput"),
-	  summaryEl = document.getElementById("evidenceBlock"), 
+      summaryEl = document.getElementById("evidenceBlock"),
       simListEl = document.getElementById("similarList"),
       resultHandleEl=document.getElementById("result-handle"),
-	  evidenceEl= document.getElementById("evidenceBlock"),
-	  analysisPanel = document.getElementById("analysis-panel"),
-	  analysisBody  = document.getElementById("analysis-body"),
+      evidenceEl= document.getElementById("evidenceBlock"),
+      analysisPanel = document.getElementById("analysis-panel"),
+      analysisBody  = document.getElementById("analysis-body"),
       errorBox  = document.getElementById("errorBox");
 
 const ECON_MIN=-10,ECON_MAX=10,AUTH_MIN=-10,AUTH_MAX=10;
 let last={self:null,pos:null,neg:null};
 let lastHandle="";
-
-// ===== html2canvas-safe layers for the #plot background (no blend modes) =====
-(function fixCanvasCaptureLayers(){
-  const root = plot;                // we already grabbed: document.getElementById('plot')
-  if (!root) return;
-
-  // neutralize any CSS background so our layers render consistently in html2canvas
-  root.style.background = 'none';
-  root.style.position = 'relative';
-  root.style.overflow = 'hidden';
-
-  // quadrant fills (adjust gradients if you want different tones)
-  const red    = 'linear-gradient(180deg,#ef4444,#b91c1c)';
-  const blue   = 'linear-gradient(180deg,#3b82f6,#1d4ed8)';
-  const green  = 'linear-gradient(180deg,#22c55e,#065f46)';
-  const purple = 'linear-gradient(180deg,#a855f7,#6d28d9)';
-
-  const wrap = document.createElement('div');
-  Object.assign(wrap.style,{position:'absolute',inset:'0',borderRadius:'inherit'});
-  root.appendChild(wrap);
-
-  function quad(left,top,bg){
-    const d = document.createElement('div');
-    Object.assign(d.style,{
-      position:'absolute', left, top, width:'50%', height:'50%', background:bg
-    });
-    return d;
-  }
-
-  // TL, TR, BL, BR
-  wrap.append(
-    quad('0','0',red),
-    quad('50%','0',blue),
-    quad('0','50%',green),
-    quad('50%','50%',purple)
-  );
-
-  // grid overlay (plain repeating gradients => html2canvas-safe)
-  const grid = document.createElement('div');
-  Object.assign(grid.style,{
-    position:'absolute', inset:'0', borderRadius:'inherit',
-    background:
-      'repeating-linear-gradient(0deg,rgba(255,255,255,.06) 0,rgba(255,255,255,.06) 1px,transparent 1px,transparent 24px),' +
-      'repeating-linear-gradient(90deg,rgba(255,255,255,.06) 0,rgba(255,255,255,.06) 1px,transparent 1px,transparent 24px)'
-  });
-  root.appendChild(grid);
-
-  // soft inner shadow / vignette
-  const shade = document.createElement('div');
-  Object.assign(shade.style,{
-    position:'absolute', inset:'0', borderRadius:'inherit',
-    boxShadow:'inset 0 10px 36px rgba(0,0,0,.25), inset 0 -10px 36px rgba(0,0,0,.28)'
-  });
-  root.appendChild(shade);
-})();
-
 
 function isTimeoutLike(err){
   const m = String(err && (err.userMessage || err.message || "")).toLowerCase();
@@ -275,13 +267,13 @@ function startProgress(){
   setProgress(0, "Starting…");
 
   const stages = [
-    { label: "Searching Wikipedia entries",     target: 0.20, duration: 7000 },
-    { label: "Extracting key facts & summaries",       target: 0.40, duration: 7000 },
-    { label: "Cross-referencing related figures",        target: 0.55, duration: 6000 },
-    { label: "Analyzing ideological context",   target: 0.70, duration: 6000 },
+    { label: "Searching Wikipedia entries",                target: 0.20, duration: 7000 },
+    { label: "Extracting key facts & summaries",           target: 0.40, duration: 7000 },
+    { label: "Cross-referencing related figures",          target: 0.55, duration: 6000 },
+    { label: "Analyzing ideological context",              target: 0.70, duration: 6000 },
     { label: "Locating nearest historical match",          target: 0.82, duration: 5000 },
-    { label: "Finalizing compass coordinates",      target: 0.90, duration: 4000 },
-    { label: "Assembling insight summary",         target: 0.96, duration: 4000 },
+    { label: "Finalizing compass coordinates",             target: 0.90, duration: 4000 },
+    { label: "Assembling insight summary",                 target: 0.96, duration: 4000 },
   ];
 
   let i = 0, phaseStart = performance.now();
@@ -321,7 +313,7 @@ inputEl.addEventListener("keydown",e=>{
   if(e.key==="Enter") sendData();
 });
 
-/* ========== YOUR NEUTRAL HELPERS (ABOVE sendData) ========== */
+/* ========== NEUTRAL HELPERS ========== */
 
 function extractAxes(r){
   if (!r || typeof r !== "object") return null;
@@ -409,7 +401,7 @@ async function sendData(){
     if (neutral){
       removeNeutralBadge();
       showNeutralState(neutral.why, neutral.axes, neutral.uncertainty);
-if (typeof window.onAnalyzeSuccess === 'function') window.onAnalyzeSuccess();
+      if (typeof window.onAnalyzeSuccess === 'function') window.onAnalyzeSuccess();
 
       setStatus("");
       stopProgress(); disableButton(false);
@@ -429,7 +421,7 @@ if (typeof window.onAnalyzeSuccess === 'function') window.onAnalyzeSuccess();
     renderSummary(payload.summary);
     renderSimilar(payload.meta);
     renderAnalysis(payload.analysis);
-if (typeof window.onAnalyzeSuccess === 'function') window.onAnalyzeSuccess();
+    if (typeof window.onAnalyzeSuccess === 'function') window.onAnalyzeSuccess();
 
     setStatus("");
   }catch(e){
@@ -553,7 +545,7 @@ function normalizeResponse(r){
     neg:  negPoint  ? snapToCellCenter(negPoint)  : null,
     meta:{ posName:pos?.name||"", posDescr:pos?.descr||"", negName:neg?.name||"", negDescr:neg?.descr||"" },
     summary: String(obj.summary || ""),
-	analysis: String(obj.analysis || "")
+    analysis: String(obj.analysis || "")
   };
 }
 
@@ -604,40 +596,29 @@ window.addEventListener("resize",()=>{
 
 /* ================ right panel =================== */
 function renderSummary(text){
-  if(!text){
-    summaryEl.innerHTML = "";
-    return;
-  }
+  if(!text){ summaryEl.innerHTML = ""; return; }
   summaryEl.innerHTML = `
     <div style="font-weight:700;margin-top:10px;margin-bottom:6px;text-align:center;text-decoration:underline;">Summary</div>
     <div style="margin:0;color:#243447;line-height:1.5;">
       ${escapeHtml(String(text))}
-    </div>
-  `;
+    </div>`;
 }
 function renderSimilar(meta){
   if(!meta || (!meta.posName && !meta.negName && !meta.posDescr && !meta.negDescr)){
     simListEl.innerHTML = "";
     return;
   }
-
   const html = `
     <div style="font-weight:700;margin-top:10px;margin-bottom:6px;text-align:center;text-decoration:underline;">Similar Figures</div>
     <div style="margin:0;color:#243447;line-height:1.5;">
       ${meta?.posName || meta?.posDescr ? `<strong>${escapeHtml(meta.posName||"")}</strong> — ${escapeHtml(meta.posDescr||"")}<br>` : ""}
       ${meta?.negName || meta?.negDescr ? `<strong>${escapeHtml(meta.negName||"")}</strong> — ${escapeHtml(meta.negDescr||"")}` : ""}
-    </div>
-  `;
+    </div>`;
   simListEl.innerHTML = html;
 }
 
 function renderAnalysis(text){
-  if(!text){ 
-    analysisPanel.hidden = true; 
-    analysisBody.innerHTML = ""; 
-    return; 
-  }
-
+  if(!text){ analysisPanel.hidden = true; analysisBody.innerHTML = ""; return; }
   const normalized = String(text)
     .replace(/\r/g, '')
     .replace(/\\u003c/gi,"<")
@@ -831,9 +812,8 @@ function chunk(arr, n){ const out=[]; for(let i=0;i<arr.length;i+=n) out.push(ar
 
 <script>
 /* ==================== SHARE RESULTS SYSTEM ==================== */
-/* Fill these when your Worker/CDN are ready */
 const WORKER_ORIGIN = 'https://your-worker.example.workers.dev'; // e.g. https://share.compassanalyzer.com
-const PUBLIC_CDN    = 'https://cdn.yourdomain.com';              // R2/CDN public domain
+const PUBLIC_CDN    = 'https://cdn.yourdomain.com';
 const SHARE_VERSION = 'v1';
 const SHARE_TARGET  = 'main-content';
 
@@ -851,10 +831,45 @@ function slugify(name){
 })();
 
 /* helpers for clean capture */
-const overlayEl = document.getElementById('share-overlay'); // <-- matches your HTML
+const overlayEl = document.getElementById('share-overlay');
 async function nextFrame(){ return new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r))); }
 
-/* Capture image of the results area (hide overlay while capturing) */
+/* ---------- html2canvas-friendly temporary backdrop for the plot ---------- */
+function __buildCaptureBackdrop(plotEl){
+  const wrap = document.createElement('div');
+  Object.assign(wrap.style,{position:'absolute', inset:'0', borderRadius:'inherit', zIndex:'0'});
+
+  function quad(left,top,bg){
+    const d = document.createElement('div');
+    Object.assign(d.style,{position:'absolute', left, top, width:'50%', height:'50%', background:bg});
+    return d;
+  }
+  const red    = 'linear-gradient(180deg,#ef4444,#b91c1c)';
+  const blue   = 'linear-gradient(180deg,#3b82f6,#1d4ed8)';
+  const green  = 'linear-gradient(180deg,#22c55e,#065f46)';
+  const purple = 'linear-gradient(180deg,#a855f7,#6d28d9)';
+
+  wrap.append(quad('0','0',red), quad('50%','0',blue), quad('0','50%',green), quad('50%','50%',purple));
+
+  const grid = document.createElement('div');
+  Object.assign(grid.style,{
+    position:'absolute', inset:'0', borderRadius:'inherit',
+    background:
+      'repeating-linear-gradient(0deg,rgba(255,255,255,.06) 0,rgba(255,255,255,.06) 1px,transparent 1px,transparent 24px),' +
+      'repeating-linear-gradient(90deg,rgba(255,255,255,.06) 0,rgba(255,255,255,.06) 1px,transparent 1px,transparent 24px)'
+  });
+  wrap.appendChild(grid);
+
+  const shade = document.createElement('div');
+  Object.assign(shade.style,{position:'absolute', inset:'0', borderRadius:'inherit',
+    boxShadow:'inset 0 10px 36px rgba(0,0,0,.20), inset 0 -10px 36px rgba(0,0,0,.22)'});
+  wrap.appendChild(shade);
+
+  plotEl.prepend(wrap);
+  return wrap;
+}
+
+/* Capture image of the results area (adds+removes the backdrop so PNG matches live) */
 async function captureResultBlob() {
   const el = document.getElementById(SHARE_TARGET);
   if (!el) throw new Error('Share target not found');
@@ -862,8 +877,15 @@ async function captureResultBlob() {
   const wasHidden = overlayEl?.hidden ?? true;
   if (overlayEl) overlayEl.hidden = true;
 
-  // ADD: give the element padding during capture so shadows aren't clipped
-  el.classList.add('capture-mode', 'capture-pad');   // <-- added 'capture-pad'
+  el.classList.add('capture-mode');
+
+  const plotEl = document.getElementById('plot');
+  let tempBackdrop = null;
+  if (plotEl){
+    plotEl.style.position = plotEl.style.position || 'relative';
+    tempBackdrop = __buildCaptureBackdrop(plotEl);
+  }
+
   await nextFrame();
 
   const rect = el.getBoundingClientRect();
@@ -878,13 +900,13 @@ async function captureResultBlob() {
     scale: Math.min(2, window.devicePixelRatio || 1) * 1.5
   });
 
-  // REMOVE the temporary styles
-  el.classList.remove('capture-mode', 'capture-pad');  // <-- remove it here
+  if (tempBackdrop) tempBackdrop.remove();
+
+  el.classList.remove('capture-mode');
   if (overlayEl) overlayEl.hidden = wasHidden;
 
   return await new Promise(res => canvas.toBlob(res, 'image/png', 0.95));
 }
-
 
 /* Optional upload to Worker (idempotent; no-op if you haven’t set it up yet) */
 async function uploadPreview(slug) {
@@ -906,7 +928,6 @@ async function uploadPreview(slug) {
   }
 }
 
-/* Build intent URLs (rich cards if WORKER_ORIGIN is set) */
 function buildShareUrl(slug){
   return (WORKER_ORIGIN && !WORKER_ORIGIN.includes('your-worker'))
     ? `${WORKER_ORIGIN}/s/${slug}`
@@ -934,7 +955,7 @@ function setIntentLinks(shareUrl){
   if (input) input.value = shareUrl;
 }
 
-/* Wire modal UI (IDs match your HTML) */
+/* Wire modal UI */
 (function(){
   const openBtn   = document.getElementById('open-share');
   const overlay   = document.getElementById('share-overlay');
@@ -1002,7 +1023,6 @@ window.onAnalyzeSuccess = function(){
   uploadPreview(slug); // best-effort
 };
 </script>
-
 
 </body>
 </html>

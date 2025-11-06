@@ -353,7 +353,8 @@ async function sendData(){
     if (neutral){
       removeNeutralBadge();
       showNeutralState(neutral.why, neutral.axes, neutral.uncertainty);
-      onAnalyzeSuccess();         // <-- added hook
+if (typeof window.onAnalyzeSuccess === 'function') window.onAnalyzeSuccess();
+
       setStatus("");
       stopProgress(); disableButton(false);
       return;

@@ -792,20 +792,42 @@ function slugify(name){
   if (q) { inputEl.value = q; sendData(); }
 })();
 
-/* Capture image of the results area */
+// helpers for clean capture
+const overlayEl = document.getElementById('qs-overlay');   // <-- your modal overlay id
+async function nextFrame(){ return new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r))); }
+
+/* Capture image of the results area (hide overlay while capturing) */
 async function captureResultBlob() {
-  const el = document.getElementById(SHARE_TARGET);
+  const el = document.getElementById(SHARE_TARGET);   // e.g., 'main-content'
   if (!el) throw new Error('Share target not found');
+
+  // hide the gray overlay so it doesn't end up in the screenshot
+  const wasHidden = overlayEl?.hidden ?? true;
+  if (overlayEl) overlayEl.hidden = true;
+
+  // freeze animations and wait one paint without the overlay
   el.classList.add('capture-mode');
+  await nextFrame();
+
+  const rect = el.getBoundingClientRect();
   const canvas = await html2canvas(el, {
     backgroundColor: '#ffffff',
     useCORS: true,
-    scale: window.devicePixelRatio > 1 ? 2 : 1
+    logging: false,
+    width: Math.ceil(rect.width),
+    height: Math.ceil(rect.height),
+    scrollX: 0,
+    scrollY: -window.scrollY,
+    scale: Math.min(2, window.devicePixelRatio || 1) * 1.5   // sharper
   });
+
   el.classList.remove('capture-mode');
+  if (overlayEl) overlayEl.hidden = wasHidden;
+
   return await new Promise(res => canvas.toBlob(res, 'image/png', 0.95));
 }
 
+	
 /* Optional upload to Worker (idempotent; no-op if you haven’t set it up yet) */
 async function uploadPreview(slug) {
   if (!WORKER_ORIGIN || WORKER_ORIGIN.includes('your-worker')) return null;

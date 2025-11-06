@@ -1093,3 +1093,35 @@ footer, .footer, #footer {
     /* no animation/transition already handled elsewhere */
     /* nothing fancy here—html2canvas will read these gradients fine */
   }
+
+
+/* Floating Copy Button */
+#copy-card-btn{
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  width: 48px; height: 48px;
+  border-radius: 12px;
+  border: 1px solid var(--border, #E6E8EF);
+  background: var(--card, #fff);
+  box-shadow: 0 6px 22px rgba(0,0,0,.14);
+  font-size: 22px; line-height: 1;
+  display: grid; place-items: center;
+  cursor: pointer; z-index: 9999;
+}
+#copy-card-btn:hover{ filter: brightness(0.97); }
+
+/* Toast */
+#copy-toast{
+  position: fixed;
+  left: 50%; bottom: 80px;
+  transform: translateX(-50%);
+  background: rgba(15,23,42,.92);
+  color: #fff; padding: 8px 12px;
+  border-radius: 10px; font-size: 14px;
+  box-shadow: 0 8px 30px rgba(0,0,0,.25);
+  display: none; z-index: 10000;
+}
+
+/* When capturing, hide the button so it isn’t in the shot */
+.capture-hiding #copy-card-btn{ visibility: hidden; }

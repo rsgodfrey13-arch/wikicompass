@@ -22,31 +22,6 @@
   </nav>
 </header>
 
-<!-- QUICK SHARE (link-based, fast like YouTube) -->
-<button id="quick-share-open" class="share-btn">🚀 Quick Share</button>
-
-<div id="qs-overlay" hidden>
-  <div id="qs-modal" role="dialog" aria-modal="true" aria-labelledby="qs-title">
-    <div class="qs-header">
-      <h3 id="qs-title">Share</h3>
-      <button id="qs-close" aria-label="Close">✕</button>
-    </div>
-    <div class="qs-grid">
-      <a id="qs-x"         class="qs-item">𝕏</a>
-      <a id="qs-fb"        class="qs-item">f</a>
-      <a id="qs-reddit"    class="qs-item">r</a>
-      <a id="qs-linkedin"  class="qs-item">in</a>
-      <a id="qs-whatsapp"  class="qs-item">wa</a>
-      <a id="qs-telegram"  class="qs-item">tg</a>
-    </div>
-    <div class="qs-copy">
-      <input id="qs-url" readonly>
-      <button id="qs-copy-btn">Copy</button>
-    </div>
-  </div>
-</div>
-
-
 	
 <div id="pc-wrap">
 
@@ -838,58 +813,15 @@ function taIsOpen(){ return taWrap.style.display === 'block'; }
 function chunk(arr, n){ const out=[]; for(let i=0;i<arr.length;i+=n) out.push(arr.slice(i,i+n)); return out; }
 </script>
 
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 
-<script>
-  // --- QUICK SHARE ---
-  const qs = {
-    openBtn:  document.getElementById('quick-share-open'),
-    overlay:  document.getElementById('qs-overlay'),
-    closeBtn: document.getElementById('qs-close'),
-    urlInput: document.getElementById('qs-url'),
-    copyBtn:  document.getElementById('qs-copy-btn'),
-    x:        document.getElementById('qs-x'),
-    fb:       document.getElementById('qs-fb'),
-    rd:       document.getElementById('qs-reddit'),
-    li:       document.getElementById('qs-linkedin'),
-    wa:       document.getElementById('qs-whatsapp'),
-    tg:       document.getElementById('qs-telegram'),
-  };
+<!-- Floating copy button -->
+<button id="copy-card-btn" aria-label="Copy result image" title="Copy result image">
+  📋
+</button>
 
-  function getShareText(){
-    const handle = (typeof window.lastHandle === 'string' && window.lastHandle) ? window.lastHandle : 'this result';
-    return `${handle} • Compass Analyzer`;
-  }
-
-  function getShareUrl(){
-    return window.location.href;
-  }
-
-  function setIntentLinks(){
-    const text = encodeURIComponent(getShareText());
-    const url  = encodeURIComponent(getShareUrl());
-    qs.urlInput.value = decodeURIComponent(url);
-    qs.x.href  = `https://twitter.com/intent/tweet?text=${text}&url=${url}`;
-    qs.fb.href = `https://www.facebook.com/sharer/sharer.php?u=${url}`;
-    qs.rd.href = `https://www.reddit.com/submit?url=${url}&title=${text}`;
-    qs.li.href = `https://www.linkedin.com/sharing/share-offsite/?url=${url}`;
-    qs.wa.href = `https://api.whatsapp.com/send?text=${text}%20${url}`;
-    qs.tg.href = `https://t.me/share/url?url=${url}&text=${text}`;
-    [qs.x,qs.fb,qs.rd,qs.li,qs.wa,qs.tg].forEach(a=>{
-      a.target='_blank'; a.rel='noopener noreferrer';
-    });
-  }
-
-  function openQS(){ setIntentLinks(); qs.overlay.hidden = false; }
-  function closeQS(){ qs.overlay.hidden = true; }
-
-  qs.openBtn?.addEventListener('click', openQS);
-  qs.closeBtn?.addEventListener('click', closeQS);
-  qs.overlay?.addEventListener('click', e=>{ if(e.target===qs.overlay) closeQS(); });
-  qs.copyBtn?.addEventListener('click', async ()=>{
-    try { await navigator.clipboard.writeText(getShareUrl()); alert('Link copied!'); }
-    catch { prompt('Copy link:', getShareUrl()); }
-  });
-</script>
+<!-- Tiny feedback toast -->
+<div id="copy-toast" role="status" aria-live="polite"></div>
 
 	
 </body>

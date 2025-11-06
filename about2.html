@@ -168,6 +168,62 @@ const ECON_MIN=-10,ECON_MAX=10,AUTH_MIN=-10,AUTH_MAX=10;
 let last={self:null,pos:null,neg:null};
 let lastHandle="";
 
+// ===== html2canvas-safe layers for the #plot background (no blend modes) =====
+(function fixCanvasCaptureLayers(){
+  const root = plot;                // we already grabbed: document.getElementById('plot')
+  if (!root) return;
+
+  // neutralize any CSS background so our layers render consistently in html2canvas
+  root.style.background = 'none';
+  root.style.position = 'relative';
+  root.style.overflow = 'hidden';
+
+  // quadrant fills (adjust gradients if you want different tones)
+  const red    = 'linear-gradient(180deg,#ef4444,#b91c1c)';
+  const blue   = 'linear-gradient(180deg,#3b82f6,#1d4ed8)';
+  const green  = 'linear-gradient(180deg,#22c55e,#065f46)';
+  const purple = 'linear-gradient(180deg,#a855f7,#6d28d9)';
+
+  const wrap = document.createElement('div');
+  Object.assign(wrap.style,{position:'absolute',inset:'0',borderRadius:'inherit'});
+  root.appendChild(wrap);
+
+  function quad(left,top,bg){
+    const d = document.createElement('div');
+    Object.assign(d.style,{
+      position:'absolute', left, top, width:'50%', height:'50%', background:bg
+    });
+    return d;
+  }
+
+  // TL, TR, BL, BR
+  wrap.append(
+    quad('0','0',red),
+    quad('50%','0',blue),
+    quad('0','50%',green),
+    quad('50%','50%',purple)
+  );
+
+  // grid overlay (plain repeating gradients => html2canvas-safe)
+  const grid = document.createElement('div');
+  Object.assign(grid.style,{
+    position:'absolute', inset:'0', borderRadius:'inherit',
+    background:
+      'repeating-linear-gradient(0deg,rgba(255,255,255,.06) 0,rgba(255,255,255,.06) 1px,transparent 1px,transparent 24px),' +
+      'repeating-linear-gradient(90deg,rgba(255,255,255,.06) 0,rgba(255,255,255,.06) 1px,transparent 1px,transparent 24px)'
+  });
+  root.appendChild(grid);
+
+  // soft inner shadow / vignette
+  const shade = document.createElement('div');
+  Object.assign(shade.style,{
+    position:'absolute', inset:'0', borderRadius:'inherit',
+    boxShadow:'inset 0 10px 36px rgba(0,0,0,.25), inset 0 -10px 36px rgba(0,0,0,.28)'
+  });
+  root.appendChild(shade);
+})();
+
+
 function isTimeoutLike(err){
   const m = String(err && (err.userMessage || err.message || "")).toLowerCase();
   return err?.name === "AbortError" || /timeout|timed out|network.*timeout|abort/.test(m);

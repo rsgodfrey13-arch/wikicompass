@@ -858,27 +858,30 @@ function buildShareUrl(slug){
 function setIntentLinks(shareUrl){
   const text = (typeof window.lastHandle === 'string' && window.lastHandle)
     ? `${window.lastHandle} • Compass Analyzer` : 'Compass Analyzer Result';
-  const u  = encodeURIComponent(shareUrl);
-  const t  = encodeURIComponent(text);
-  document.getElementById('share-x').href        = `https://twitter.com/intent/tweet?url=${u}&text=${t}`;
-  document.getElementById('share-fb').href       = `https://www.facebook.com/sharer/sharer.php?u=${u}`;
-  document.getElementById('share-reddit').href   = `https://www.reddit.com/submit?url=${u}&title=${t}`;
-  document.getElementById('share-linkedin').href = `https://www.linkedin.com/sharing/share-offsite/?url=${u}`;
-  ['share-x','share-fb','share-reddit','share-linkedin'].forEach(id=>{
-    const a = document.getElementById(id); a.target = '_blank'; a.rel='noopener';
-  });
-  const input = document.getElementById('share-url'); input.value = shareUrl;
+  const u = encodeURIComponent(shareUrl);
+  const t = encodeURIComponent(text);
+
+  // these IDs already exist in your modal
+  const map = {
+    'qs-x':        `https://twitter.com/intent/tweet?url=${u}&text=${t}`,
+    'qs-fb':       `https://www.facebook.com/sharer/sharer.php?u=${u}`,
+    'qs-reddit':   `https://www.reddit.com/submit?url=${u}&title=${t}`,
+    'qs-linkedin': `https://www.linkedin.com/sharing/share-offsite/?url=${u}`,
+  };
+  for (const [id, href] of Object.entries(map)) {
+    const a = document.getElementById(id);
+    if (a) { a.href = href; a.target = '_blank'; a.rel = 'noopener'; }
+  }
+  const input = document.getElementById('qs-url');
+  if (input) input.value = shareUrl;
 }
 
-/* Wire modal UI */
+
 (function(){
-  const openBtn   = document.getElementById('open-share');
-  const overlay   = document.getElementById('share-overlay');
-  const closeBtn  = document.getElementById('share-close');
-  const copyLink  = document.getElementById('copy-link');
-  const copyImg   = document.getElementById('copy-img');
-  const dlImg     = document.getElementById('dl-img');
-  const refresh   = document.getElementById('refresh-img');
+  const openBtn   = document.getElementById('quick-share-open'); // was 'open-share'
+  const overlay   = document.getElementById('qs-overlay');       // was 'share-overlay'
+  const closeBtn  = document.getElementById('qs-close');         // was 'share-close'
+  const copyLink  = document.getElementById('qs-copy-btn');      // was 'copy-link'
 
   async function openModal(){
     const slug = slugify(window.lastHandle || '');
@@ -891,12 +894,17 @@ function setIntentLinks(shareUrl){
 
   openBtn?.addEventListener('click', openModal);
   closeBtn?.addEventListener('click', closeModal);
-  overlay?.addEventListener('click', (e)=>{ if (e.target === overlay) closeModal(); });
+  overlay?.addEventListener('click', e=>{ if (e.target === overlay) closeModal(); });
 
   copyLink?.addEventListener('click', async ()=>{
-    try{ await navigator.clipboard.writeText(document.getElementById('share-url').value); alert('Link copied!'); }
-    catch{ prompt('Copy link:', document.getElementById('share-url').value); }
+    const url = document.getElementById('qs-url')?.value || location.href;
+    try { await navigator.clipboard.writeText(url); alert('Link copied!'); }
+    catch { prompt('Copy link:', url); }
   });
+
+  // (Optional: add buttons later for copy image / download if you add them to the HTML)
+})();
+
 
   copyImg?.addEventListener('click', async ()=>{
     try{

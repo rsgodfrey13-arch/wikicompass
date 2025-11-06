@@ -806,7 +806,8 @@ async function captureResultBlob() {
   const wasHidden = overlayEl?.hidden ?? true;
   if (overlayEl) overlayEl.hidden = true;
 
-  el.classList.add('capture-mode');
+  // ADD: give the element padding during capture so shadows aren't clipped
+  el.classList.add('capture-mode', 'capture-pad');   // <-- added 'capture-pad'
   await nextFrame();
 
   const rect = el.getBoundingClientRect();
@@ -821,11 +822,13 @@ async function captureResultBlob() {
     scale: Math.min(2, window.devicePixelRatio || 1) * 1.5
   });
 
-  el.classList.remove('capture-mode');
+  // REMOVE the temporary styles
+  el.classList.remove('capture-mode', 'capture-pad');  // <-- remove it here
   if (overlayEl) overlayEl.hidden = wasHidden;
 
   return await new Promise(res => canvas.toBlob(res, 'image/png', 0.95));
 }
+
 
 /* Optional upload to Worker (idempotent; no-op if you haven’t set it up yet) */
 async function uploadPreview(slug) {

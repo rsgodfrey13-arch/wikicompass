@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="en" class="wiki-theme">
+  
 <head>
   <script>(function(s){s.dataset.zone='10133093',s.src='https://forfrogadiertor.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -7,75 +8,7 @@
   <title>Wikipedia Political Compass</title>
   <link rel="stylesheet" href="style2.css">
 
-  <style>
-    /* ---------- minimal overrides (safe even with style2.css) ---------- */
 
-    :root{
-      --quad-red-1:#ef4444;  --quad-red-2:#b91c1c;
-      --quad-blue-1:#3b82f6; --quad-blue-2:#1d4ed8;
-      --quad-green-1:#22c55e;--quad-green-2:#065f46;
-      --quad-purple-1:#a855f7;--quad-purple-2:#6d28d9;
-      --plot-radius:16px;
-    }
-
-    /* Plot frame keeps your rounded container */
-    #plot-frame{
-      position:relative;
-      border-radius:var(--plot-radius);
-      background:rgba(255,255,255,.75);
-      box-shadow: 0 10px 36px rgba(0,0,0,.10), inset 0 1px 0 rgba(255,255,255,.35);
-      padding:0;           /* important for capture bounds */
-      overflow:hidden;     /* keep children inside curve */
-    }
-
-    /* The actual square plot */
-    #plot{
-      position:relative;
-      width:100%;
-      height:100%;
-      border-radius:inherit;
-      /* 4 quadrants (bottom layer) */
-      background:
-        /* quadrants (4 layers) */
-        linear-gradient(180deg,var(--quad-red-1),var(--quad-red-2)) 0 0 / 50% 50% no-repeat,
-        linear-gradient(180deg,var(--quad-blue-1),var(--quad-blue-2)) 100% 0 / 50% 50% no-repeat,
-        linear-gradient(180deg,var(--quad-green-1),var(--quad-green-2)) 0 100% / 50% 50% no-repeat,
-        linear-gradient(180deg,var(--quad-purple-1),var(--quad-purple-2)) 100% 100% / 50% 50% no-repeat,
-        /* grid (top layers) */
-        repeating-linear-gradient(0deg, rgba(255,255,255,.06) 0, rgba(255,255,255,.06) 1px, transparent 1px, transparent 24px),
-        repeating-linear-gradient(90deg,rgba(255,255,255,.06) 0, rgba(255,255,255,.06) 1px, transparent 1px, transparent 24px);
-      background-blend-mode: normal;
-      box-shadow: inset 0 10px 36px rgba(0,0,0,.18), inset 0 -10px 36px rgba(0,0,0,.20);
-    }
-
-    /* Dots/labels (in case style2.css doesn't include) */
-    .dot{position:absolute;width:12px;height:12px;border-radius:50%;background:#111;box-shadow:0 2px 6px rgba(0,0,0,.25);display:none}
-    .dot.small{width:10px;height:10px}
-    .tag{position:absolute;padding:6px 10px;border-radius:10px;background:#fff;border:1px solid rgba(0,0,0,.08);box-shadow:0 6px 20px rgba(0,0,0,.15);font-size:12px;display:none;white-space:nowrap;user-select:none}
-
-    /* Share UI + capture helpers (yours) */
-    #share-cta { display:flex; justify-content:center; margin:12px 0 4px; }
-    #open-share { padding:10px 14px; border-radius:12px; border:1px solid var(--border,#E6E8EF); background:var(--card,#fff); font-weight:600; cursor:pointer; }
-    #share-overlay[hidden] { display:none; }
-    #share-overlay { position:fixed; inset:0; background:rgba(15,23,42,.35); display:flex; align-items:center; justify-content:center; z-index:9999; }
-    #share-modal { width:min(560px, calc(100vw - 32px)); background:var(--card,#fff); border:1px solid var(--border,#E6E8EF); border-radius:16px; box-shadow:0 10px 40px rgba(0,0,0,.18); }
-    .sm-head { display:flex; align-items:center; justify-content:space-between; padding:12px 14px; border-bottom:1px solid var(--border,#E6E8EF); }
-    .sm-title { margin:0; font-size:18px; font-weight:700; }
-    .sm-close { border:none; background:transparent; font-size:18px; cursor:pointer; }
-    .sm-body { padding:14px; display:grid; gap:14px; }
-    .row { display:grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap:10px; }
-    .btn { padding:10px 12px; border-radius:12px; border:1px solid var(--border,#E6E8EF); background:var(--card,#fff); font-weight:600; cursor:pointer; text-align:center; }
-    .btn.primary { background:#0F172A; color:#fff; }
-    .btn.icon { display:flex; gap:8px; align-items:center; justify-content:center; }
-    .row.links { grid-template-columns: repeat(4, minmax(0,1fr)); }
-    .link { text-decoration:none; }
-    .copy-bar { display:grid; grid-template-columns:1fr auto; gap:8px; }
-    #share-url { width:100%; padding:10px 12px; border:1px solid var(--border,#E6E8EF); border-radius:12px; font-family:inherit; }
-    .hint { font-size:12px; color:var(--muted,#5B6577); text-align:center; margin-top:-6px; }
-
-    /* helpful when capturing with html2canvas */
-    .capture-mode * { transition:none !important; animation:none !important; }
-  </style>
 </head>
 
 <body>

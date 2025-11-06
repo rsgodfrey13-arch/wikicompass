@@ -7,6 +7,51 @@
   <meta charset="utf-8" />
   <title>Wikipedia Political Compass</title>
   <link rel="stylesheet" href="style2.css">
+<style>
+/* 🔧 HARD OVERRIDE of the compass visuals (wins via specificity + !important) */
+html.wiki-theme body #pc-wrap #main-content #compass-wrap #plot-frame{
+  position: relative !important;
+  border-radius: 18px !important;
+  overflow: hidden !important;
+  background: #0b1220 !important;
+  box-shadow:
+    inset 0 0 0 1px rgba(0,0,0,.25),
+    0 14px 40px rgba(0,0,0,.25) !important;
+}
+
+/* height here so the background shows even if plot had 0 height elsewhere */
+html.wiki-theme body #pc-wrap #main-content #compass-wrap #plot-frame #plot{
+  width: 100% !important;
+  height: min(62vh, 560px) !important;
+  border-radius: inherit !important;
+
+  /* 4 quadrants + grid + vignette — order matters */
+  background:
+    /* TL red */    linear-gradient(#e14b43,#e14b43) left   top    / 50% 50% no-repeat,
+    /* TR blue */   linear-gradient(#2d7cf6,#2d7cf6) right  top    / 50% 50% no-repeat,
+    /* BL green */  linear-gradient(#18b57c,#18b57c) left   bottom / 50% 50% no-repeat,
+    /* BR purple */ linear-gradient(#8a5af8,#8a5af8) right  bottom/ 50% 50% no-repeat,
+
+    /* vertical grid */
+    repeating-linear-gradient(to right, rgba(255,255,255,.10) 0 1px, transparent 1px 28px),
+    /* horizontal grid */
+    repeating-linear-gradient(to bottom, rgba(255,255,255,.10) 0 1px, transparent 1px 28px),
+
+    /* vignette for depth */
+    radial-gradient(140% 90% at 50% 120%, rgba(0,0,0,.22), transparent 55%),
+    radial-gradient(120% 70% at 50% -30%, rgba(255,255,255,.25), transparent 60%) !important;
+
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.15),
+    inset 0 -1px 0 rgba(0,0,0,.15) !important;
+}
+
+html.wiki-theme #plot-frame .dot,
+html.wiki-theme #plot-frame .tag{
+  position: absolute !important;
+  z-index: 2 !important;
+}
+</style>
 
 
 </head>

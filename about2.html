@@ -373,7 +373,8 @@ if (typeof window.onAnalyzeSuccess === 'function') window.onAnalyzeSuccess();
     renderSummary(payload.summary);
     renderSimilar(payload.meta);
     renderAnalysis(payload.analysis);
-    onAnalyzeSuccess();           // <-- added hook
+if (typeof window.onAnalyzeSuccess === 'function') window.onAnalyzeSuccess();
+
     setStatus("");
   }catch(e){
     clearMarkers(); resultHandleEl.style.display="none";
@@ -793,20 +794,18 @@ function slugify(name){
   if (q) { inputEl.value = q; sendData(); }
 })();
 
-// helpers for clean capture
-const overlayEl = document.getElementById('qs-overlay');   // <-- your modal overlay id
+/* helpers for clean capture */
+const overlayEl = document.getElementById('share-overlay'); // <-- matches your HTML
 async function nextFrame(){ return new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r))); }
 
 /* Capture image of the results area (hide overlay while capturing) */
 async function captureResultBlob() {
-  const el = document.getElementById(SHARE_TARGET);   // e.g., 'main-content'
+  const el = document.getElementById(SHARE_TARGET);
   if (!el) throw new Error('Share target not found');
 
-  // hide the gray overlay so it doesn't end up in the screenshot
   const wasHidden = overlayEl?.hidden ?? true;
   if (overlayEl) overlayEl.hidden = true;
 
-  // freeze animations and wait one paint without the overlay
   el.classList.add('capture-mode');
   await nextFrame();
 
@@ -819,7 +818,7 @@ async function captureResultBlob() {
     height: Math.ceil(rect.height),
     scrollX: 0,
     scrollY: -window.scrollY,
-    scale: Math.min(2, window.devicePixelRatio || 1) * 1.5   // sharper
+    scale: Math.min(2, window.devicePixelRatio || 1) * 1.5
   });
 
   el.classList.remove('capture-mode');
@@ -828,7 +827,6 @@ async function captureResultBlob() {
   return await new Promise(res => canvas.toBlob(res, 'image/png', 0.95));
 }
 
-	
 /* Optional upload to Worker (idempotent; no-op if you haven’t set it up yet) */
 async function uploadPreview(slug) {
   if (!WORKER_ORIGIN || WORKER_ORIGIN.includes('your-worker')) return null;
@@ -849,11 +847,11 @@ async function uploadPreview(slug) {
   }
 }
 
-/* Build intent URLs pointing to the Worker share page (rich cards) */
+/* Build intent URLs (rich cards if WORKER_ORIGIN is set) */
 function buildShareUrl(slug){
   return (WORKER_ORIGIN && !WORKER_ORIGIN.includes('your-worker'))
     ? `${WORKER_ORIGIN}/s/${slug}`
-    : location.href; // fallback: current URL
+    : location.href;
 }
 
 function setIntentLinks(shareUrl){
@@ -862,27 +860,31 @@ function setIntentLinks(shareUrl){
   const u = encodeURIComponent(shareUrl);
   const t = encodeURIComponent(text);
 
-  // these IDs already exist in your modal
   const map = {
-    'qs-x':        `https://twitter.com/intent/tweet?url=${u}&text=${t}`,
-    'qs-fb':       `https://www.facebook.com/sharer/sharer.php?u=${u}`,
-    'qs-reddit':   `https://www.reddit.com/submit?url=${u}&title=${t}`,
-    'qs-linkedin': `https://www.linkedin.com/sharing/share-offsite/?url=${u}`,
+    'share-x':        `https://twitter.com/intent/tweet?url=${u}&text=${t}`,
+    'share-fb':       `https://www.facebook.com/sharer/sharer.php?u=${u}`,
+    'share-reddit':   `https://www.reddit.com/submit?url=${u}&title=${t}`,
+    'share-linkedin': `https://www.linkedin.com/sharing/share-offsite/?url=${u}`,
   };
   for (const [id, href] of Object.entries(map)) {
     const a = document.getElementById(id);
     if (a) { a.href = href; a.target = '_blank'; a.rel = 'noopener'; }
   }
-  const input = document.getElementById('qs-url');
+
+  const input = document.getElementById('share-url');
   if (input) input.value = shareUrl;
 }
 
-
+/* Wire modal UI (IDs match your HTML) */
 (function(){
-  const openBtn   = document.getElementById('quick-share-open'); // was 'open-share'
-  const overlay   = document.getElementById('qs-overlay');       // was 'share-overlay'
-  const closeBtn  = document.getElementById('qs-close');         // was 'share-close'
-  const copyLink  = document.getElementById('qs-copy-btn');      // was 'copy-link'
+  const openBtn   = document.getElementById('open-share');
+  const overlay   = document.getElementById('share-overlay');
+  const closeBtn  = document.getElementById('share-close');
+  const copyLink  = document.getElementById('copy-link');
+
+  const copyImg   = document.getElementById('copy-img');
+  const dlImg     = document.getElementById('dl-img');
+  const refresh   = document.getElementById('refresh-img');
 
   async function openModal(){
     const slug = slugify(window.lastHandle || '');
@@ -898,14 +900,10 @@ function setIntentLinks(shareUrl){
   overlay?.addEventListener('click', e=>{ if (e.target === overlay) closeModal(); });
 
   copyLink?.addEventListener('click', async ()=>{
-    const url = document.getElementById('qs-url')?.value || location.href;
+    const url = document.getElementById('share-url')?.value || location.href;
     try { await navigator.clipboard.writeText(url); alert('Link copied!'); }
     catch { prompt('Copy link:', url); }
   });
-
-  // (Optional: add buttons later for copy image / download if you add them to the HTML)
-})();
-
 
   copyImg?.addEventListener('click', async ()=>{
     try{
@@ -930,23 +928,22 @@ function setIntentLinks(shareUrl){
   refresh?.addEventListener('click', async ()=>{
     const slug = slugify(window.lastHandle || '');
     if (!slug) return alert('Run an analysis first.');
-    await uploadPreview(slug); // best-effort
+    await uploadPreview(slug);
     const shareUrl = buildShareUrl(slug);
     setIntentLinks(shareUrl);
     alert('Preview refreshed (if Worker is configured).');
   });
 })();
 
-/* Hook after a successful analyze without touching your core logic */
-function onAnalyzeSuccess(){
+/* Hook after a successful analyze */
+window.onAnalyzeSuccess = function(){
   const slug = slugify(window.lastHandle || '');
-  if (slug) {
-    history.replaceState({}, '', `?q=${encodeURIComponent(window.lastHandle)}`);
-    // Fire-and-forget upload; safe if Worker not set yet
-    uploadPreview(slug);
-  }
-}
+  if (!slug) return;
+  history.replaceState({}, '', `?q=${encodeURIComponent(window.lastHandle)}`);
+  uploadPreview(slug); // best-effort
+};
 </script>
+
 
 </body>
 </html>

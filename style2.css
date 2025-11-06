@@ -1015,3 +1015,9 @@ footer, .footer, #footer {
 
 .capture-mode * { animation: none !important; transition: none !important; }
 
+/* Give extra room only while capturing so shadows aren't clipped */
+#main-content.capture-pad {
+  padding: 24px;            /* room for shadow blur */
+  background: #fff;         /* clean edge */
+  border-radius: 20px;      /* matches your look */
+}
